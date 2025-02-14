@@ -25,14 +25,12 @@ class JsonConfigManager:
             self.error_handler.handle_error(
                 "Config File Not Found",
                 f"The config file '{self.config_file}' was not found. Creating a new one with default settings.",
-                show_message_box=True,
             )
             self.create_default_config()
         except json.JSONDecodeError:
             self.error_handler.handle_error(
                 "Config File Corrupted",
                 f"The config file '{self.config_file}' is corrupted. Creating a new one with default settings.",
-                show_message_box=True,
             )
             self.create_default_config()
 
