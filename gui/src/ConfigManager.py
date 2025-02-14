@@ -26,6 +26,7 @@ class JsonConfigManager:
                 "Config File Not Found",
                 f"The config file '{self.config_file}' was not found. Creating a new one with default settings.",
             )
+            self.error_handler.log_message(f"Config file not found: {self.config_file}")  # ログ出力を追加
             self.create_default_config()
         except json.JSONDecodeError:
             self.error_handler.handle_error(
@@ -35,6 +36,7 @@ class JsonConfigManager:
             self.create_default_config()
 
     def create_default_config(self):
+        self.error_handler.log_message("Creating default config...")  # ログ出力を追加
         self.config = {
             "app_version": "0.0.0",
             "translation_version": "0.0.0",
@@ -44,8 +46,10 @@ class JsonConfigManager:
             "translation_server_url": "",
         }
         self.save_config()
+        self.error_handler.log_message("Default config created.")  # ログ出力を追加
 
     def save_config(self):
+        self.error_handler.log_message("Saving config...")  # ログ出力を追加
         try:
             with open(self.config_file, "w", encoding="utf-8") as f:
                 json.dump(self.config, f, indent=4)
@@ -54,6 +58,7 @@ class JsonConfigManager:
                 "Error Saving Config",
                 f"An error occurred while saving the config file: {e}",
             )
+        self.error_handler.log_message("Config saved.")  # ログ出力を追加
 
     def get_config(self, key: str, default: Optional[Any] = None) -> Any:
         return self.config.get(key, default)

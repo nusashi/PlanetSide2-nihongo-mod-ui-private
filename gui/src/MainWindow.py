@@ -262,6 +262,7 @@ class MainWindow(QMainWindow):
         )
         if reply == QMessageBox.Yes:
             event.accept()
+            self.ui_manager.get_error_handler().log_message("Application closed by user.")  # ログ出力を追加
         else:
             event.ignore()
         print("MainWindow.closeEvent finished")
