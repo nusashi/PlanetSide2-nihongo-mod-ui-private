@@ -69,6 +69,11 @@
     *   `MainWindow.py`のアイコン設定を修正:完了
 * `MainWindow.py`のコメントアウト解除: 完了
 * UIが表示されない問題の解決: 完了
+*   `MainWindow.py`の`setup_layout`メソッドで`combobox_launch_mode`をレイアウトに追加: 完了
+*   `MainWindow`クラスに`update_local_path`メソッドを定義: 完了
+*   `MainManager.py`へのログ出力追加: 完了
+*   `UIManager.py`へのログ出力追加: 完了
+*   Memory Bankの更新: 完了 (今回`activeContext.md`を更新)
 
 ## 既知の問題
 
@@ -76,15 +81,10 @@
 
 ## 今後の計画
 
-1.  **UIの改善:**
-    *   `MainWindow.py`の`setup_layout`メソッドで`combobox_launch_mode`をレイアウトに追加
-    *   `MainWindow`クラスに`update_local_path`メソッドを定義
-    *   `MainWindow.py`の修正 (UI部分のコード化)と動作確認、ユーザーとの相談による調整
-2.  **アップデート:** GitHub Releasesからのアップデート確認機能とアプリの自動アップデート機能を実装
-3.  **サーバーの可用性:** GitHub Releasesへの完全移行 (現行サーバーの停止)
+1.  **アップデート:** GitHub Releasesからのアップデート確認機能とアプリの自動アップデート機能を実装
+2.  **サーバーの可用性:** GitHub Releasesへの完全移行 (現行サーバーの停止)
 
 ## UIに関する要件
-
 1.  **フォント:**
     *   GUI本体はデフォルトフォントを使用。
     *   `MyFont.ttf`は、ゲームの日本語化フォント差し替えに使用する元ファイル。

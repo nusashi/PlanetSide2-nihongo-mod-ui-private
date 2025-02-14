@@ -84,12 +84,14 @@
 * `MainWindow.py`の`setup_layout`メソッドで`combobox_launch_mode`がレイアウトに追加されていない
 * `MainWindow`クラスに`update_local_path`メソッドが定義されていない
 
-## 次のステップ
+## 最近の変更
 
+*   `MainWindow.py`の`setup_layout`メソッドで`combobox_launch_mode`をレイアウトに追加
+*   `MainWindow`クラスに`update_local_path`メソッドを定義
 *   `MainManager.py`へのログ出力追加
 *   `UIManager.py`へのログ出力追加
 *   Memory Bankの更新 (今回)
-*   UIの改善
-    *   `MainWindow.py`の`setup_layout`メソッドで`combobox_launch_mode`をレイアウトに追加
-    *   `MainWindow`クラスに`update_local_path`メソッドを定義
+
+## 次のステップ
+
 *   アップデート機能の実装
