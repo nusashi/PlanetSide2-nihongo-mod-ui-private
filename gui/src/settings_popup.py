@@ -6,6 +6,7 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QGroupBox,
     QHBoxLayout,
+    QFileDialog,
 )
 from PySide6.QtCore import Qt
 
