@@ -91,13 +91,13 @@
 ```mermaid
 classDiagram
     class MainManager {
-        +base_dir: str
+        +base_dir: String
         +config_manager: ConfigManager
         +network_manager: NetworkManager
         +game_launcher: GameLauncher
         +file_operations: FileOperations
         +error_handler: ErrorHandler
-        +Logic: dict
+        +Logic: Dict
         +ui_manager: UIManager
         +get_base_dir()
         +run()
@@ -219,34 +219,34 @@ classDiagram
     }
 
 
- UIManager --|> IMainManagerAdapter
- MainManager --|> IMainManagerAdapter
- GUI -- UIManager
- MainWindow -- UIManager
- MainManager --> ConfigManager
- MainManager --> NetworkManager
- MainManager --> GameLauncher
- MainManager --> FileOperations
- MainManager --> ErrorHandler
- MainManager --> CheckUpdateGUILogic
- MainManager --> CheckUpdateTranslationLogic
- MainManager --> DownloadGUILogic
- MainManager --> DownloadTranslationLogic
- MainManager --> DownloadFontLogic
- MainManager --> GameLaunchLogic
- MainManager --> CopyDatFileLogic
- MainManager --> CopyDirFileLogic
- MainManager --> CopyFontFileLogic
- MainManager --> GetAppVersionLogic
- MainManager --> GetTranslationVersionLogic
- MainManager --> GetLaunchModeLogic
- MainManager --> GetLocalPathLogic
- MainManager --> SetGuiServerURLLogic
- MainManager --> SetTranslationServerURLLogic
- MainManager --> CheckGuiServerStatusLogic
- MainManager --> CheckTranslationServerStatusLogic
- MainManager --> SetLocalPathLogic
- MainManager --> SetLaunchModeLogic
+    UIManager --|> IMainManagerAdapter
+    MainManager --|> IMainManagerAdapter
+    GUI -- UIManager
+    MainWindow -- UIManager
+    MainManager --> ConfigManager
+    MainManager --> NetworkManager
+    MainManager --> GameLauncher
+    MainManager --> FileOperations
+    MainManager --> ErrorHandler
+    MainManager --> CheckUpdateGUILogic
+    MainManager --> CheckUpdateTranslationLogic
+    MainManager --> DownloadGUILogic
+    MainManager --> DownloadTranslationLogic
+    MainManager --> DownloadFontLogic
+    MainManager --> GameLaunchLogic
+    MainManager --> CopyDatFileLogic
+    MainManager --> CopyDirFileLogic
+    MainManager --> CopyFontFileLogic
+    MainManager --> GetAppVersionLogic
+    MainManager --> GetTranslationVersionLogic
+    MainManager --> GetLaunchModeLogic
+    MainManager --> GetLocalPathLogic
+    MainManager --> SetGuiServerURLLogic
+    MainManager --> SetTranslationServerURLLogic
+    MainManager --> CheckGuiServerStatusLogic
+    MainManager --> CheckTranslationServerStatusLogic
+    MainManager --> SetLocalPathLogic
+    MainManager --> SetLaunchModeLogic
 ```
 
 ## 課題
