@@ -31,12 +31,12 @@ class MainWindow(QMainWindow):
         print("MainWindow initialized")
         self.setWindowTitle("PS2 日本語化")
         print("MainWindow.setWindowTitle called")
-        # self.set_icons()
+        self.set_icons()
         print("MainWindow.set_icons called")
         self.init_ui()
         print("MainWindow.init_ui called")
-        # self.setup_layout() # コメントアウト
-        # print("MainWindow.setup_layout called")
+        self.setup_layout()
+        print("MainWindow.setup_layout called")
         self.setFixedSize(270, 350)
         print("MainWindow.setFixedSize called")
 
@@ -104,6 +104,10 @@ class MainWindow(QMainWindow):
         self.button_check_update = QPushButton("アップデート確認")
         print("MainWindow.button_check_update initialized")
 
+        # ローカルパス
+        self.label_local_path = QLabel("")
+        print("MainWindow.label_local_path initialized")
+
         # ステータス
         self.textedit_status = QTextEdit()
         self.textedit_status.setReadOnly(True)
@@ -144,6 +148,7 @@ class MainWindow(QMainWindow):
         hbox_launch_mode = QHBoxLayout()
         hbox_launch_mode.addWidget(self.radio_normal)
         hbox_launch_mode.addWidget(self.radio_steam)
+        hbox_launch_mode.addWidget(self.combobox_launch_mode)
         groupbox_launch_mode.setLayout(hbox_launch_mode)
         groupbox_launch_mode.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         print("MainWindow.groupbox_launch_mode setup done")
@@ -162,6 +167,8 @@ class MainWindow(QMainWindow):
         grid_version.addWidget(self.label_translation_version, 1, 0)
         grid_version.addWidget(self.button_update_translation, 1, 1)
         grid_version.addWidget(self.button_check_update, 2, 0, 1, 2)  # Span two columns
+        # ローカルパス (ラベル)
+        grid_version.addWidget(self.label_local_path, 3, 0, 1, 2) # バージョン情報の下に追加
         groupbox_version.setLayout(grid_version)
         print("MainWindow.groupbox_version setup done")
 
@@ -286,6 +293,14 @@ class MainWindow(QMainWindow):
         print(f"MainWindow.launch_mode_changed: mode={mode}")
         self.ui_manager.set_launch_mode(mode)
         print("MainWindow.launch_mode_changed finished")
+
+    def update_local_path(self, path: str):
+        print("MainWindow.update_local_path called")
+        """
+        ローカルパス表示を更新する
+        """
+        self.label_local_path.setText(f"ローカルパス: {path}")
+        print("MainWindow.update_local_path finished")
 
     def set_launch_mode_on_startup(self, mode: int):
         print("MainWindow.set_launch_mode_on_startup called")

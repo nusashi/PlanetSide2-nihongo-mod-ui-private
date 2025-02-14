@@ -32,27 +32,33 @@ class UIManager(IMainManagerAdapter):
         print("UIManager.update_ui() called")
         app.exec()
         print("app.exec() called")
+        self.main_manager.get_error_handler().log_message("UIManager.run finished")
 
     def show_error_dialog(self, title, message):
         self.main_manager.get_error_handler().log_message("UIManager.show_error_dialog called")
         QMessageBox.critical(self.main_window, title, message)
+        self.main_manager.get_error_handler().log_message("UIManager.show_error_dialog finished")
 
     def show_update_dialog(self, app_update, app_url):
         self.main_manager.get_error_handler().log_message("UIManager.show_update_dialog called")
         # Dummy implementation
         print(f"show_update_dialog: {app_update} {app_url}")
+        self.main_manager.get_error_handler().log_message("UIManager.show_update_dialog finished")
 
     def launch_game(self, mode, path):
         self.main_manager.get_error_handler().log_message("UIManager.launch_game called")
         self.main_manager.launch_game(mode, path)
+        self.main_manager.get_error_handler().log_message("UIManager.launch_game finished")
 
     def copy_translation_files(self, path):
         self.main_manager.get_error_handler().log_message("UIManager.copy_translation_files called")
         self.main_manager.copy_translation_files(path)
+        self.main_manager.get_error_handler().log_message("UIManager.copy_translation_files finished")
 
     def update_data(self):
         self.main_manager.get_error_handler().log_message("UIManager.update_data called")
         self.main_manager.update_data()
+        self.main_manager.get_error_handler().log_message("UIManager.update_data finished")
 
     def open_settings_popup(self):
         self.main_manager.get_error_handler().log_message("UIManager.open_settings_popup called")
@@ -60,6 +66,7 @@ class UIManager(IMainManagerAdapter):
             self.settings_popup = SettingsPopup()
         self.update_settings_popup()  # 設定ポップアップの内容を更新
         self.settings_popup.show()
+        self.main_manager.get_error_handler().log_message("UIManager.open_settings_popup finished")
 
     def set_app_server_url(self, url):
         self.main_manager.get_error_handler().log_message("UIManager.set_app_server_url called")
@@ -67,6 +74,7 @@ class UIManager(IMainManagerAdapter):
         if result.success:
             self.main_manager.get_error_handler().log_message(f"App server URL set to {url}")
             self.update_settings_popup()  # 設定ポップアップの内容を更新
+        self.main_manager.get_error_handler().log_message("UIManager.set_app_server_url finished")
 
     def set_translation_server_url(self, url):
         self.main_manager.get_error_handler().log_message("UIManager.set_translation_server_url called")
@@ -74,6 +82,7 @@ class UIManager(IMainManagerAdapter):
         if result.success:
             self.main_manager.get_error_handler().log_message(f"Translation server URL set to {url}")
             self.update_settings_popup()  # 設定ポップアップの内容を更新
+        self.main_manager.get_error_handler().log_message("UIManager.set_translation_server_url finished")
 
     def set_local_path(self, path):
         self.main_manager.get_error_handler().log_message("UIManager.set_local_path called")
@@ -81,6 +90,7 @@ class UIManager(IMainManagerAdapter):
         if result.success:
             self.main_manager.get_error_handler().log_message(f"Local path set to {path}")
             self.update_ui()
+        self.main_manager.get_error_handler().log_message("UIManager.set_local_path finished")
 
     def update_settings_popup(self):
         self.main_manager.get_error_handler().log_message("UIManager.update_settings_popup called")
@@ -91,6 +101,7 @@ class UIManager(IMainManagerAdapter):
             self.settings_popup.lineedit_app_server_url.setText(app_server_url)
             self.settings_popup.lineedit_translation_server_url.setText(translation_server_url)
             self.settings_popup.lineedit_local_path.setText(local_path)
+        self.main_manager.get_error_handler().log_message("UIManager.update_settings_popup finished")
 
     def update_ui(self):
         """
@@ -101,8 +112,8 @@ class UIManager(IMainManagerAdapter):
         print("UIManager.update_ui called")
         if self.main_window:
             # ローカルパスの表示を更新
-            # local_path = self.main_manager.get_config("local_path")
-            # self.main_window.update_local_path(local_path)
+            local_path = self.main_manager.get_config("local_path")
+            self.main_window.update_local_path(local_path)
 
             # 起動モードを読み込んで設定
             mode = self.main_manager.get_config("launch_mode")
@@ -113,25 +124,31 @@ class UIManager(IMainManagerAdapter):
                 self.update_settings_popup()
             print("UIManager.update_ui: self.main_window is not None")
         print("UIManager.update_ui finished")
+        self.main_manager.get_error_handler().log_message("UIManager.update_ui finished")
 
     def get_main_window(self):
         self.main_manager.get_error_handler().log_message("UIManager.get_main_window called")
         return self.main_window
+        self.main_manager.get_error_handler().log_message("UIManager.get_main_window finished")
 
     def get_config_manager(self):
         self.main_manager.get_error_handler().log_message("UIManager.get_config_manager called")
         return self.main_manager.get_config_manager()
+        self.main_manager.get_error_handler().log_message("UIManager.get_config_manager finished")
 
     def get_network_manager(self):
         self.main_manager.get_error_handler().log_message("UIManager.get_network_manager called")
         return self.main_manager.get_network_manager()
+        self.main_manager.get_error_handler().log_message("UIManager.get_network_manager finished")
 
     def get_error_handler(self):
         self.main_manager.get_error_handler().log_message("UIManager.get_error_handler called")
         return self.main_manager.get_error_handler()
+        self.main_manager.get_error_handler().log_message("UIManager.get_error_handler finished")
 
     def check_updates(self):
         self.main_manager.check_for_updates()
+        self.main_manager.get_error_handler().log_message("UIManager.check_updates finished")
 
     def get_base_dir(self) -> str:
         return self.main_manager.get_base_dir()
@@ -143,6 +160,7 @@ class UIManager(IMainManagerAdapter):
         except Exception as e:
             self.main_manager.get_error_handler().handle_error("Network Error", str(e))
             return None
+        self.main_manager.get_error_handler().log_message("UIManager.check_gui_server_status finished")
 
     def check_translation_server_status(self) -> Union[Tuple[bool, int], None]:
         self.main_manager.get_error_handler().log_message("UIManager.check_translation_server_status called")
@@ -151,6 +169,7 @@ class UIManager(IMainManagerAdapter):
         except Exception as e:
             self.main_manager.get_error_handler().handle_error("Network Error", str(e))
             return None
+        self.main_manager.get_error_handler().log_message("UIManager.check_translation_server_status finished")
 
     def set_launch_mode(self, mode: int):
         self.main_manager.get_error_handler().log_message("UIManager.set_launch_mode called")
@@ -163,3 +182,4 @@ class UIManager(IMainManagerAdapter):
                 self.main_window.radio_normal.setChecked(True)
             elif mode == 1:
                 self.main_window.radio_steam.setChecked(True)
+        self.main_manager.get_error_handler().log_message("UIManager.set_launch_mode finished")

@@ -76,6 +76,7 @@ class MainManager(IMainManagerAdapter):
         # UIManager経由でGUIを初期化・表示
         self.ui_manager = UIManager(self)
         self.ui_manager.run()
+        self.error_handler.log_message("MainManager.run finished")
 
     def check_server_status(self) -> Union[Tuple[bool, int], None]:
         self.error_handler.log_message("MainManager.check_server_status called")
@@ -90,6 +91,7 @@ class MainManager(IMainManagerAdapter):
         except Exception as e:
             self.error_handler.handle_error("Network Error", str(e), stop_execution=True)
             return None
+        self.error_handler.log_message("MainManager.check_server_status finished")
 
     def check_for_updates(self):
         """
@@ -107,6 +109,7 @@ class MainManager(IMainManagerAdapter):
             current_translation_version = self.get_config("translation_version")
             if current_translation_version != translation_version_result.value:
                 self.next_translation_version = translation_version_result.value
+        self.error_handler.log_message("MainManager.check_for_updates finished")
 
     def check_update_gui(self):
         self.error_handler.log_message("MainManager.check_update_gui called")
