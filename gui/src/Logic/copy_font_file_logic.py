@@ -3,6 +3,7 @@ from src.ILogic import ILogic, LogicResult
 import os
 import shutil
 
+
 class CopyFontFileLogic(ILogic):
     def __init__(self, main_manager: IMainManagerAdapter):
         """
@@ -38,9 +39,7 @@ class CopyFontFileLogic(ILogic):
             )
             shutil.copy2(
                 font_path,
-                os.path.join(
-                    local_path, "UI", "Resource", "Fonts", "Ps2GeoMdRosaVerde.ttf"
-                ),
+                os.path.join(local_path, "UI", "Resource", "Fonts", "Ps2GeoMdRosaVerde.ttf"),
             )
             self.main_manager.get_error_handler().log_message("CopyFontFileLogic.execute: success")
             return LogicResult(success=True)

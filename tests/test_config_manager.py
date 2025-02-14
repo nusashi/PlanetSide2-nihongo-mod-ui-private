@@ -97,9 +97,7 @@ class TestConfigManager(unittest.TestCase):
         self.config_manager = JsonConfigManager(self.config_file)
         self.main_manager = MainManager.MainManager(MockGUI())  # MockGUIを使用
         self.main_manager.config_manager = self.config_manager
-        self.main_manager.network_manager = (
-            MockNetworkManager(self.config_manager)  # MockNetworkManagerを設定
-        )
+        self.main_manager.network_manager = MockNetworkManager(self.config_manager)  # MockNetworkManagerを設定
         self.test_file = os.path.join(os.path.dirname(__file__), "test_file.txt")
         # テスト用のディレクトリとファイルを作成
         self.test_dir = os.path.join(os.path.dirname(__file__), "test_data")
@@ -113,7 +111,7 @@ class TestConfigManager(unittest.TestCase):
         self.main_manager.base_dir = self.test_dir
         # ErrorHandlerのshow_guiをFalseに設定
         self.main_manager.error_handler.show_gui = False
-    
+
     def test_set_local_path(self):
         # Test setting local path
         test_path = "test_local_path"
@@ -127,7 +125,7 @@ class TestConfigManager(unittest.TestCase):
         self.main_manager.set_launch_mode(test_mode)
         mock_execute.assert_called_once_with(test_mode)
         self.assertEqual(self.config_manager.get_config("launch_mode"), test_mode)
-    
+
     @patch("json.load")
     def test_load_config_json_decode_error(self, mock_json_load):
         # Test loading config when JSONDecodeError occurs

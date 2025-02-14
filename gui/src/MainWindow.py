@@ -115,27 +115,19 @@ class MainWindow(QMainWindow):
 
         # 設定ボタン
         self.button_settings = QPushButton()
-        self.button_settings.setIcon(
-            self.style().standardIcon(QStyle.SP_FileDialogListView)
-        )
+        self.button_settings.setIcon(self.style().standardIcon(QStyle.SP_FileDialogListView))
         self.button_settings.setIconSize(QSize(24, 24))
         self.button_settings.setFixedSize(30, 30)
-        self.button_settings.setStyleSheet(
-            "QPushButton { background-color: transparent; border: none; }"
-        )
+        self.button_settings.setStyleSheet("QPushButton { background-color: transparent; border: none; }")
         self.button_settings.clicked.connect(self.ui_manager.open_settings_popup)
         print("MainWindow.button_settings initialized")
 
         # ヘルプボタン (仮)
         self.button_help = QPushButton()
-        self.button_help.setIcon(
-            self.style().standardIcon(QStyle.SP_MessageBoxQuestion)
-        )
+        self.button_help.setIcon(self.style().standardIcon(QStyle.SP_MessageBoxQuestion))
         self.button_help.setIconSize(QSize(24, 24))
         self.button_help.setFixedSize(30, 30)
-        self.button_help.setStyleSheet(
-            "QPushButton { background-color: transparent; border: none; }"
-        )
+        self.button_help.setStyleSheet("QPushButton { background-color: transparent; border: none; }")
         self.button_help.clicked.connect(self.open_help)
         print("MainWindow.button_help initialized")
 
@@ -274,12 +266,8 @@ class MainWindow(QMainWindow):
 
     def setup_connections(self):
         print("MainWindow.setup_connections called")
-        self.radio_normal.clicked.connect(
-            lambda: self.ui_manager.set_launch_mode(0)
-        )
-        self.radio_steam.clicked.connect(
-            lambda: self.ui_manager.set_launch_mode(1)
-        )
+        self.radio_normal.clicked.connect(lambda: self.ui_manager.set_launch_mode(0))
+        self.radio_steam.clicked.connect(lambda: self.ui_manager.set_launch_mode(1))
         self.button_check_update.clicked.connect(self.ui_manager.check_updates)
         self.button_update_app.clicked.connect(self.ui_manager.update_data)
         self.button_update_translation.clicked.connect(self.ui_manager.update_data)

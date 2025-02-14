@@ -97,9 +97,7 @@ class TestNetworkManager(unittest.TestCase):
         self.config_manager = JsonConfigManager(self.config_file)
         self.main_manager = MainManager.MainManager(MockGUI())  # MockGUIを使用
         self.main_manager.config_manager = self.config_manager
-        self.main_manager.network_manager = (
-            MockNetworkManager(self.config_manager)  # MockNetworkManagerを設定
-        )
+        self.main_manager.network_manager = MockNetworkManager(self.config_manager)  # MockNetworkManagerを設定
         self.test_file = os.path.join(os.path.dirname(__file__), "test_file.txt")
         # テスト用のディレクトリとファイルを作成
         self.test_dir = os.path.join(os.path.dirname(__file__), "test_data")
@@ -125,7 +123,7 @@ class TestNetworkManager(unittest.TestCase):
         result = self.main_manager.check_server_status()
         self.assertEqual(result, (None, None))
         mock_execute_gui.assert_called_once()
-    
+
     @patch("gui.src.MainWindow.MainWindow")  # MainWindowをモック化
     def test_check_updates_with_mock(self, mock_main_window):
         # MockNetworkManagerを使用するように設定

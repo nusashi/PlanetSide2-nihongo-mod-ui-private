@@ -1,9 +1,6 @@
-from PySide6.QtWidgets import (
-    QWidget,
-    QLabel,
-    QVBoxLayout
-)
+from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout
 from PySide6.QtCore import Qt
+
 
 class HelpPopup(QWidget):
     def __init__(self):
@@ -27,7 +24,7 @@ class HelpPopup(QWidget):
         詳細については、README.mdを参照してください。
         """
         self.label_help = QLabel(help_text)
-        self.label_help.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft) #左上
+        self.label_help.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)  # 左上
         self.label_help.setWordWrap(True)  # 折り返しを有効にする
 
         # レイアウト

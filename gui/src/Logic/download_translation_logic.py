@@ -2,6 +2,7 @@ from src.IMainManagerAdapter import IMainManagerAdapter
 from src.ILogic import ILogic, LogicResult
 from src.MockNetworkManager import MockNetworkManager
 
+
 class DownloadTranslationLogic(ILogic):
     def __init__(self, main_manager: IMainManagerAdapter):
         """

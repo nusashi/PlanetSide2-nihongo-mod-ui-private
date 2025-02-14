@@ -3,6 +3,7 @@ import subprocess
 from src.IMainManagerAdapter import IMainManagerAdapter
 from src.ILogic import ILogic, LogicResult
 
+
 class GameLaunchLogic(ILogic):
     def __init__(self, main_manager: IMainManagerAdapter):
         """

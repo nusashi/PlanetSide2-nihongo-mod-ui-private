@@ -3,6 +3,7 @@ import shutil
 from abc import ABC, abstractmethod
 import logging
 
+
 class FileOperationsInterface(ABC):
     @abstractmethod
     def copy_translation_files(self, local_path):
@@ -46,24 +47,18 @@ class DefaultFileOperations(FileOperationsInterface):
         try:
             # 必要なディレクトリを作成する
             os.makedirs(os.path.join(local_path, "Locale"), exist_ok=True)
-            os.makedirs(
-                os.path.join(local_path, "UI", "Resource", "Fonts"), exist_ok=True
-            )
+            os.makedirs(os.path.join(local_path, "UI", "Resource", "Fonts"), exist_ok=True)
 
             # 翻訳ファイルをコピーする
             logging.debug(f"copy_translation_files: copying {jp_data_dat_path} to {os.path.join(local_path, 'Locale', 'en_us_data.dat')}")
             try:
-                shutil.copy2(
-                    jp_data_dat_path, os.path.join(local_path, "Locale", "en_us_data.dat")
-                )
+                shutil.copy2(jp_data_dat_path, os.path.join(local_path, "Locale", "en_us_data.dat"))
             except OSError as e:
                 logging.error(f"copy_translation_files: OSError: {e}")
                 raise Exception(f"Failed to copy file: {e}") from e
             logging.debug(f"copy_translation_files: copying {jp_data_dir_path} to {os.path.join(local_path, 'Locale', 'en_us_data.dir')}")
             try:
-                shutil.copy2(
-                    jp_data_dir_path, os.path.join(local_path, "Locale", "en_us_data.dir")
-                )
+                shutil.copy2(jp_data_dir_path, os.path.join(local_path, "Locale", "en_us_data.dir"))
             except OSError as e:
                 logging.error(f"copy_translation_files: OSError: {e}")
                 raise Exception(f"Failed to copy file: {e}") from e
@@ -82,9 +77,7 @@ class DefaultFileOperations(FileOperationsInterface):
             try:
                 shutil.copy2(
                     font_path,
-                    os.path.join(
-                        local_path, "UI", "Resource", "Fonts", "Ps2GeoMdRosaVerde.ttf"
-                    ),
+                    os.path.join(local_path, "UI", "Resource", "Fonts", "Ps2GeoMdRosaVerde.ttf"),
                 )
             except OSError as e:
                 logging.error(f"copy_translation_files: OSError: {e}")

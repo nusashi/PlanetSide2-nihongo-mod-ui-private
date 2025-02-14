@@ -2,6 +2,7 @@ from src.IMainManagerAdapter import IMainManagerAdapter
 from src.ILogic import ILogic, LogicResult
 from src.NetworkManager import RequestsNetworkManager
 
+
 class CheckGuiServerStatusLogic(ILogic):
     def __init__(self, main_manager: IMainManagerAdapter):
         """

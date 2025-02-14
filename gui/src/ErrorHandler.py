@@ -2,6 +2,7 @@ import logging
 import traceback
 from PySide6.QtWidgets import QMessageBox
 
+
 class ErrorHandler:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
@@ -34,8 +35,7 @@ class ErrorHandler:
     def show_error_message(self, error_type, error_message, main_window):
         """エラーメッセージをGUIに表示する"""
         # main_window.error_message_label.setText(f"{error_type}: {error_message}") # 修正前
-        main_window.textedit_status.setText(f"{error_type}: {error_message}") # 修正後
-
+        main_window.textedit_status.setText(f"{error_type}: {error_message}")  # 修正後
 
     def log_message(self, message):
         """ログメッセージを出力する"""

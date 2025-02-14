@@ -53,11 +53,7 @@ if __name__ == "__main__":
     initialize_base_directory()
     config_manager = JsonConfigManager(os.environ["BASE_DIR"])
     network_manager = MockNetworkManager(config_manager)
-    main_manager = MainManager(
-        config_manager, network_manager, os.environ["BASE_DIR"]
-    )  # base_dirを渡す
-    print(
-        f"After MainManager instantiation: config_manager={config_manager}, network_manager={network_manager}, base_dir={os.environ['BASE_DIR']}"
-    )
+    main_manager = MainManager(config_manager, network_manager, os.environ["BASE_DIR"])  # base_dirを渡す
+    print(f"After MainManager instantiation: config_manager={config_manager}, network_manager={network_manager}, base_dir={os.environ['BASE_DIR']}")
     main_manager.run()
     print("After main_manager.run()")

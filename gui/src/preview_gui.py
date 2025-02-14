@@ -4,26 +4,8 @@ from PySide6.QtGui import QAction, QIcon
 from settings_popup import SettingsPopup
 from help_popup import HelpPopup
 
-from PySide6.QtWidgets import (
-    QApplication,
-    QWidget,
-    QLabel,
-    QPushButton,
-    QVBoxLayout,
-    QHBoxLayout,
-    QFileDialog,
-    QRadioButton,
-    QLineEdit,
-    QProgressBar,
-    QFrame,
-    QGroupBox,
-    QTextEdit,
-    QMenuBar,
-    QMenu,
-    QSizePolicy,
-    QGridLayout,
-    QStyle
-)
+from PySide6.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QFileDialog, QRadioButton, QLineEdit, QProgressBar, QFrame, QGroupBox, QTextEdit, QMenuBar, QMenu, QSizePolicy, QGridLayout, QStyle
+
 
 class PreviewWindow(QWidget):
     def __init__(self):
@@ -92,7 +74,6 @@ class PreviewWindow(QWidget):
         self.button_help.clicked.connect(self.open_help)
         self.button_help.setStyleSheet("QPushButton { background-color: transparent; border: none; }")
 
-
     def setup_layout(self):
         # 起動モード
         groupbox_launch_mode = QGroupBox("起動モード")
@@ -101,7 +82,6 @@ class PreviewWindow(QWidget):
         hbox_launch_mode.addWidget(self.radio_steam)
         groupbox_launch_mode.setLayout(hbox_launch_mode)
         groupbox_launch_mode.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-
 
         # ゲーム起動/ファイル置き換えボタン
         hbox_buttons = QHBoxLayout()
@@ -152,6 +132,7 @@ class PreviewWindow(QWidget):
 
     def open_help(self):
         self.help_popup.show()
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

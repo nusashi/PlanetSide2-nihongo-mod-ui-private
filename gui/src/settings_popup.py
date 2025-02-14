@@ -9,6 +9,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt
 
+
 class SettingsPopup(QWidget):
     def __init__(self):
         super().__init__()
@@ -36,7 +37,7 @@ class SettingsPopup(QWidget):
         self.label_author = QLabel("Authors: A, B, C")  # Replace with actual author names
 
         # ライセンス表示 (仮)
-        self.label_license = QLabel("License: MIT License") # Replace with actual license
+        self.label_license = QLabel("License: MIT License")  # Replace with actual license
 
     def setup_layout(self):
         # ゲームフォルダ位置指定
@@ -75,9 +76,7 @@ class SettingsPopup(QWidget):
         self.setLayout(main_layout)
 
     def setup_connections(self, ui_manager):
-        self.button_local_path.clicked.connect(
-            lambda: self.open_file_dialog(ui_manager)
-        )
+        self.button_local_path.clicked.connect(lambda: self.open_file_dialog(ui_manager))
 
     def open_file_dialog(self, ui_manager):
         folder_path = QFileDialog.getExistingDirectory(self, "Select Directory")

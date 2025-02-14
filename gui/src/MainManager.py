@@ -83,18 +83,12 @@ class MainManager(IMainManagerAdapter):
             gui_status = self.Logic["check_gui_server_status"].execute()
             translation_status = self.Logic["check_translation_server_status"].execute()
             if gui_status.success and gui_status.value:
-                self.network_manager.server_status, self.network_manager.server_code = (
-                    gui_status.value
-                )
+                self.network_manager.server_status, self.network_manager.server_code = gui_status.value
             elif translation_status.success and translation_status.value:
-                self.network_manager.server_status, self.network_manager.server_code = (
-                    translation_status.value
-                )
+                self.network_manager.server_status, self.network_manager.server_code = translation_status.value
             return self.network_manager.server_status, self.network_manager.server_code
         except Exception as e:
-            self.error_handler.handle_error(
-                "Network Error", str(e), stop_execution=True
-            )
+            self.error_handler.handle_error("Network Error", str(e), stop_execution=True)
             return None
 
     def check_for_updates(self):
@@ -116,16 +110,12 @@ class MainManager(IMainManagerAdapter):
 
     def check_update_gui(self):
         self.error_handler.log_message("MainManager.check_update_gui called")
-        result = self.Logic["check_update_gui"].execute(
-            repo_owner="maboroshino", repo_name="PlanetSide2-nihongo-mod"
-        )
+        result = self.Logic["check_update_gui"].execute(repo_owner="maboroshino", repo_name="PlanetSide2-nihongo-mod")
         return result
 
     def check_update_translation(self):
         self.error_handler.log_message("MainManager.check_update_translation called")
-        result = self.Logic["check_update_translation"].execute(
-            repo_owner="maboroshino", repo_name="PlanetSide2-nihongo-mod"
-        )
+        result = self.Logic["check_update_translation"].execute(repo_owner="maboroshino", repo_name="PlanetSide2-nihongo-mod")
         return result
 
     def set_app_server_url(self, url):
@@ -155,16 +145,12 @@ class MainManager(IMainManagerAdapter):
         """
         self.error_handler.log_message("MainManager.update_gui called")
         try:
-            update_required = self.Logic["check_update_gui"].execute(
-                repo_owner="maboroshino", repo_name="PlanetSide2-nihongo-mod"
-            )
+            update_required = self.Logic["check_update_gui"].execute(repo_owner="maboroshino", repo_name="PlanetSide2-nihongo-mod")
             if update_required.success and update_required.value:
                 pass
                 # TODO: 再起動処理
             else:
-                self.error_handler.log_message(
-                    "MainManager.update_gui: No update required"
-                )
+                self.error_handler.log_message("MainManager.update_gui: No update required")
         except Exception as e:
             self.error_handler.handle_error("Update Error", str(e))
 
@@ -174,16 +160,12 @@ class MainManager(IMainManagerAdapter):
         """
         self.error_handler.log_message("MainManager.update_translation called")
         try:
-            update_required = self.Logic["check_update_translation"].execute(
-                repo_owner="maboroshino", repo_name="PlanetSide2-nihongo-mod"
-            )
+            update_required = self.Logic["check_update_translation"].execute(repo_owner="maboroshino", repo_name="PlanetSide2-nihongo-mod")
             if update_required.success and update_required.value:
                 pass
                 # TODO: ファイルコピー処理
             else:
-                self.error_handler.log_message(
-                    "MainManager.update_translation: No update required"
-                )
+                self.error_handler.log_message("MainManager.update_translation: No update required")
         except Exception as e:
             self.error_handler.handle_error("Update Error", str(e))
 
@@ -209,13 +191,8 @@ class MainManager(IMainManagerAdapter):
             else:
                 error_message = result.error if result.error else "Unknown error"
                 if isinstance(result.error, FileNotFoundError):
-                    error_message = (
-                        "LaunchPad.exeが見つかりません。"
-                        "PlanetSide2のローカルパスが正しい位置になっているか確認してください。"
-                    )
-                self.error_handler.handle_error(
-                    "Launch Error", error_message, self.ui_manager.get_main_window()
-                )
+                    error_message = "LaunchPad.exeが見つかりません。" "PlanetSide2のローカルパスが正しい位置になっているか確認してください。"
+                self.error_handler.handle_error("Launch Error", error_message, self.ui_manager.get_main_window())
         except Exception as e:
             self.error_handler.handle_error(
                 "Launch Error",
@@ -230,14 +207,7 @@ class MainManager(IMainManagerAdapter):
             result_dat = self.Logic["copy_dat_file"].execute(path)
             result_dir = self.Logic["copy_dir_file"].execute(path)
             result_font = self.Logic["copy_font_file"].execute(path)
-            if (
-                result_dat
-                and result_dat.success
-                and result_dir
-                and result_dir.success
-                and result_font
-                and result_font.success
-            ):
+            if result_dat and result_dat.success and result_dir and result_dir.success and result_font and result_font.success:
                 pass
             else:
                 error_message = ""
@@ -253,9 +223,7 @@ class MainManager(IMainManagerAdapter):
                     self.ui_manager.get_main_window(),
                 )
         except Exception as e:
-            self.error_handler.handle_error(
-                "File Operation Error", str(e), self.ui_manager.get_main_window()
-            )
+            self.error_handler.handle_error("File Operation Error", str(e), self.ui_manager.get_main_window())
 
     def update_data(self):
         self.error_handler.log_message("MainManager.update_data called")
@@ -273,17 +241,11 @@ class MainManager(IMainManagerAdapter):
                 "ja_jp_data.dir",
                 self.base_dir,
             )
-            self.Logic["download_font"].execute(
-                "maboroshino", "PlanetSide2-nihongo-mod", "MyFont.ttf", self.base_dir
-            )
+            self.Logic["download_font"].execute("maboroshino", "PlanetSide2-nihongo-mod", "MyFont.ttf", self.base_dir)
             # GUIの更新処理
-            gui_update_result = self.Logic["check_update_gui"].execute(
-                "maboroshino", "PlanetSide2-nihongo-mod"
-            )
+            gui_update_result = self.Logic["check_update_gui"].execute("maboroshino", "PlanetSide2-nihongo-mod")
             if gui_update_result.success and gui_update_result.value:
-                self.ui_manager.show_update_dialog(
-                    True, ""
-                )  # TODO: Fix URL to actual gui update url
+                self.ui_manager.show_update_dialog(True, "")  # TODO: Fix URL to actual gui update url
         except Exception as e:
             self.error_handler.handle_error("Update Error", str(e))
 
@@ -325,9 +287,7 @@ class MainManager(IMainManagerAdapter):
             return None
 
     def check_translation_server_status(self) -> Union[Tuple[bool, int], None]:
-        self.error_handler.log_message(
-            "MainManager.check_translation_server_status called"
-        )
+        self.error_handler.log_message("MainManager.check_translation_server_status called")
         try:
             return self.Logic["check_translation_server_status"].execute()
         except Exception as e:

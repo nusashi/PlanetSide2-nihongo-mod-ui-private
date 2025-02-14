@@ -2,6 +2,7 @@ from src.IMainManagerAdapter import IMainManagerAdapter
 from src.ILogic import ILogic, LogicResult
 from src.MockNetworkManager import MockNetworkManager
 
+
 class DownloadGuiLogic(ILogic):
     def __init__(self, main_manager: IMainManagerAdapter):
         """
@@ -41,7 +42,7 @@ class DownloadGuiLogic(ILogic):
                 for asset in latest_release["assets"]:
                     if asset["name"] == asset_name:
                         url = asset["browser_download_url"]
-                        success, _ = network_manager.download_file(url, download_path)                        
+                        success, _ = network_manager.download_file(url, download_path)
                         if success:
                             self.main_manager.get_error_handler().log_message("DownloadGuiLogic.execute: success")
                             return LogicResult(success=True)

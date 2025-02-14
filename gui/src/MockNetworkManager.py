@@ -1,6 +1,7 @@
 # gui/src/MockNetworkManager.py
 
-class MockNetworkManager():
+
+class MockNetworkManager:
     def __init__(self, config_manager):
         self.config_manager = config_manager
         self.server_status = 1
@@ -14,11 +15,8 @@ class MockNetworkManager():
         return {
             "tag_name": "1.1.0",
             "assets": [
-                {
-                    "name": "version_info.txt",
-                    "browser_download_url": "mock_url"  # 使用しないが、エラーにならないように追加
-                },
-            ]
+                {"name": "version_info.txt", "browser_download_url": "mock_url"},  # 使用しないが、エラーにならないように追加
+            ],
         }
 
     def download_latest_files(self):

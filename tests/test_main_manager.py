@@ -97,9 +97,7 @@ class TestMainManager(unittest.TestCase):
         self.config_manager = JsonConfigManager(self.config_file)
         self.main_manager = MainManager(MockGUI())  # MockGUIを使用
         self.main_manager.config_manager = self.config_manager
-        self.main_manager.network_manager = (
-            MockNetworkManager(self.config_manager)  # MockNetworkManagerを設定
-        )
+        self.main_manager.network_manager = MockNetworkManager(self.config_manager)  # MockNetworkManagerを設定
         self.test_file = os.path.join(os.path.dirname(__file__), "test_file.txt")
         # テスト用のディレクトリとファイルを作成
         self.test_dir = os.path.join(os.path.dirname(__file__), "test_data")
@@ -122,9 +120,7 @@ class TestMainManager(unittest.TestCase):
         self.assertIsNotNone(self.main_manager.game_launcher)
         self.assertIsNotNone(self.main_manager.file_operations)
         self.assertIsNotNone(self.main_manager.error_handler)
-        self.assertIsInstance(
-            self.main_manager.gui_app, MockGUI
-        )  # gui_appがMockGUIのインスタンスであることを確認
+        self.assertIsInstance(self.main_manager.gui_app, MockGUI)  # gui_appがMockGUIのインスタンスであることを確認
 
     @patch("gui.src.Logic.set_local_path_logic.SetLocalPathLogic.execute")
     @patch("gui.src.Logic.set_launch_mode_logic.SetLaunchModeLogic.execute")
@@ -172,12 +168,8 @@ class TestMainManager(unittest.TestCase):
         mock_set_launch_mode.return_value = MagicMock(success=True)
         mock_check_gui_server_status.return_value = MagicMock(success=True, value=(200, None))
         mock_check_translation_server_status.return_value = MagicMock(success=True, value=(200, None))
-        mock_check_update_gui.return_value = MagicMock(
-            gui_updatable=False, current_gui_version="1.0.0", latest_gui_version="1.0.0"
-        )
-        mock_check_update_translation.return_value = MagicMock(
-            translation_updatable=False, current_translation_version="1.0.0", latest_translation_version="1.0.0"
-        )
+        mock_check_update_gui.return_value = MagicMock(gui_updatable=False, current_gui_version="1.0.0", latest_gui_version="1.0.0")
+        mock_check_update_translation.return_value = MagicMock(translation_updatable=False, current_translation_version="1.0.0", latest_translation_version="1.0.0")
         mock_copy_dat_file.return_value = MagicMock(success=True)
         mock_copy_dir_file.return_value = MagicMock(success=True)
         mock_copy_font_file.return_value = MagicMock(success=True)
@@ -227,9 +219,7 @@ class TestMainManager(unittest.TestCase):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Test MainManager functionalities.")
-    parser.add_argument(
-        "--test", type=str, help="Specific test to run (e.g., test_set_local_path)"
-    )
+    parser.add_argument("--test", type=str, help="Specific test to run (e.g., test_set_local_path)")
     args = parser.parse_args()
 
     # Run specific test if provided, otherwise run all tests

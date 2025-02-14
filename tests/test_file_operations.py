@@ -97,9 +97,7 @@ class TestFileOperations(unittest.TestCase):
         self.config_manager = JsonConfigManager(self.config_file)
         self.main_manager = MainManager.MainManager(MockGUI())  # MockGUIを使用
         self.main_manager.config_manager = self.config_manager
-        self.main_manager.network_manager = (
-            MockNetworkManager(self.config_manager)  # MockNetworkManagerを設定
-        )
+        self.main_manager.network_manager = MockNetworkManager(self.config_manager)  # MockNetworkManagerを設定
         self.test_file = os.path.join(os.path.dirname(__file__), "test_file.txt")
         # テスト用のディレクトリとファイルを作成
         self.test_dir = os.path.join(os.path.dirname(__file__), "test_data")
@@ -129,9 +127,7 @@ class TestFileOperations(unittest.TestCase):
         logging.debug("test_copy_translation_files_os_error: start")
         try:
             self.main_manager.copy_translation_files(test_path)
-            logging.debug(
-                "test_copy_translation_files_os_error: copy_translation_files called"
-            )
+            logging.debug("test_copy_translation_files_os_error: copy_translation_files called")
             mock_copy_dat_file.assert_called_once_with(test_path)
             mock_copy_dir_file.assert_called_once_with(test_path)
             mock_copy_font_file.assert_called_once_with(test_path)
@@ -157,22 +153,16 @@ class TestFileOperations(unittest.TestCase):
         logging.debug("test_copy_translation_files_file_not_found: start")
         try:
             self.main_manager.copy_translation_files(test_path)
-            logging.debug(
-                "test_copy_translation_files_file_not_found: copy_translation_files called"
-            )
+            logging.debug("test_copy_translation_files_file_not_found: copy_translation_files called")
             mock_copy_dat_file.assert_called_once_with(test_path)
             mock_copy_dir_file.assert_called_once_with(test_path)
             mock_copy_font_file.assert_called_once_with(test_path)
         except FileNotFoundError as e:
-            logging.exception(
-                "test_copy_translation_files_file_not_found: Exception caught"
-            )
+            logging.exception("test_copy_translation_files_file_not_found: Exception caught")
             self.assertIsInstance(e, FileNotFoundError)
             self.assertIn("File not found", str(e))
         except Exception as e:
-            logging.debug(
-                f"test_copy_translation_files_file_not_found: Exception caught: {e}"
-            )
+            logging.debug(f"test_copy_translation_files_file_not_found: Exception caught: {e}")
             self.fail(f"copy_translation_files() raised unexpected exception: {e}")
         finally:
             logging.debug("test_copy_translation_files_file_not_found: end")

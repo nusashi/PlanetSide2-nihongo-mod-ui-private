@@ -2,6 +2,7 @@ from PySide6.QtWidgets import QApplication
 from gui.src.MainWindow import MainWindow
 import sys
 
+
 class GuiApp:
     def __init__(self, main_manager):
         self.app = QApplication(sys.argv)

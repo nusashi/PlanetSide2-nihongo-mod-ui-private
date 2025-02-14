@@ -1,6 +1,7 @@
 from src.IMainManagerAdapter import IMainManagerAdapter
 from src.ILogic import ILogic, LogicResult
 
+
 class GetAppVersionLogic(ILogic):
     def __init__(self, main_manager: IMainManagerAdapter):
         """
