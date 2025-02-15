@@ -8,6 +8,7 @@
 *   エラー処理 (ログ出力、ユーザー通知、GUI表示)
 *   GitHub Releasesからのアップデート確認 (アプリバージョン): モック実装完了
 *   GUIからの設定編集機能 (翻訳バージョン、アプリケーションバージョンは表示のみで編集不可)
+*   設定ポップアップの「参照...」ボタン
 *   各種テスト: 完了
     *   ファイル操作
     *   `NetworkManager`のモック
@@ -73,17 +74,17 @@
 *   `MainWindow`クラスに`update_local_path`メソッドを定義: 完了
 *   `MainManager.py`へのログ出力追加: 完了
 *   `UIManager.py`へのログ出力追加: 完了
-*   Memory Bankの更新: 完了 (今回`activeContext.md`を更新)
-
+*   Memory Bankの更新: 完了 (今回`activeContext.md`と`progress.md`を更新)
+*   `settings_popup.py`、`UIManager.py`、`MainManager.py`、`MockNetworkManager.py`の修正 (設定ポップアップの「参照...」ボタンの問題解決)
+*   `sub memory-bank`ディレクトリと`sub .clinerules`ファイルの作成
+*   `python_cheat_sheet.md`の作成と更新
 ## 既知の問題
-
 *   アップデート: アプリの自動アップデート未実装
 *   起動モード変更がconfig.jsonに即時反映されない
 *   ゲーム起動ボタン、日本語化ボタンが反応しない
 *   アップデート確認ボタンの結果がモック
 *   ステータス表示が未実装
 *   設定ポップアップのローカルパス変更がMainWindowに反映されない
-*   設定ポップアップの「参照...」ボタンが動作しない
 *   設定ポップアップでローカルパスを変更してもconfig.jsonに反映されない
 *   設定ポップアップでサーバーURLを変更してもconfig.jsonに反映されない
 

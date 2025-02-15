@@ -52,6 +52,9 @@
 *   `MainManager.py`内でのLogicモジュールのインポートは`gui.src.Logic.*`形式を使用する。
 *   `IMainManagerAdapter`インターフェースに`get_base_dir`メソッドを追加し、Logicモジュールはこれを利用して`base_dir`を取得する。
 *   `MockNetworkManager`を使用する場合は、`RequestsNetworkManager`用のメソッド呼び出しを`MockNetworkManager`用に修正する。
+*   `apply_diff`ツールの`start_line`と`end_line`は、ファイルの現在の行数に合わせて指定する必要がある。
+*   Architectモードでは`.md`ファイルしか編集できない。
+*   Codeモードでは、ファイルの作成、読み込み、書き込み、`apply_diff`による編集が可能。
 # テストコードに関する知見
 
 *   `MockGUI` クラスは `IMainManagerAdapter` インターフェースを実装する必要がある。

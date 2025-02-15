@@ -1,0 +1,34 @@
+# Sub Cline Rules
+
+## 既存の .clinerules から引き継ぐルール
+
+*   コードは、可読性を重視して記述する。
+*   エラー処理を適切に行い、エラーメッセージを詳細にする。
+*   UI は、ユーザーが使いやすいように設計する。
+*   設定ファイルは、JSON 形式で管理する。
+*   ファイルパスを環境変数から取得するようにする。
+*   `replace_in_file`の使用は今後も永続的に禁止する。
+*   Logicモジュールは、`MainManager`から呼び出され、特定のビジネスロジックを実行する。
+*   Logicモジュールは、`MainManager`が提供するインターフェースを介して、`ConfigManager`の機能を利用する。
+*   Logicモジュールは、原則としてGUIと直接やり取りしない。GUIとのやり取りは、`MainManager`が担当する。
+*   Logicモジュールのファイル名は、`*_logic.py`とする。
+*   Logicモジュールは、可能な限り細分化し、単一の責任を持つようにする。
+*   Logicモジュールは、`ILogic`インターフェースを継承し、`execute`メソッドを持つ必要がある。
+*   `MainManager`からLogicモジュールを呼び出す際は、`self.Logic["モジュール名"].execute(...)`の形にする。
+*   `MainManager.py`で`sys.path`を操作しない。
+*   Logicモジュール内でのインポートは`src.*`形式を使用する。
+*   `MainManager.py`内でのLogicモジュールのインポートは`gui.src.Logic.*`形式を使用する。(プロジェクト構成が変わる可能性があるので、新しいルールでは削除)
+*   `IMainManagerAdapter`インターフェースに`get_base_dir`メソッドを追加し、Logicモジュールはこれを利用して`base_dir`を取得する。
+*   `write_to_file` ツールを積極的に使用し、`replace_in_file` は使用しない。
+*   UIとビジネスロジックの接続
+    *   `MainManager`はGUIに依存しない。
+    *   `MainWindow`は`IMainManagerAdapter`インターフェースを実装したクラス(`UIManager`)を介して`MainManager`とやり取りする。
+    *   `UIManager`は`MainManager`の`run`メソッドから呼び出され、GUIを初期化する。
+    *   `MainWindow`のイベントハンドラは、`UIManager`のメソッドを呼び出す。
+    *   `UIManager`は、`MainManager`のLogicモジュールの`execute`メソッドを呼び出して、ビジネスロジックを実行する。
+    *   `UIManager`は、`MainManager`から受け取った情報や、設定ファイル(`config.json`)の内容を基に、`MainWindow`のUI要素を更新する (`update_ui`メソッド)。
+
+## 新しいプロジェクトでのルール
+
+*   `MainManager`にエラーハンドリングの責務を持たせる。
+*   `copy_translation_files_logic.py`は最初は実装しない。
