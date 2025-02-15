@@ -65,6 +65,7 @@ class UIManager(IMainManagerAdapter):
         if self.settings_popup is None:
             self.settings_popup = SettingsPopup()
         self.update_settings_popup()  # 設定ポップアップの内容を更新
+        self.settings_popup.setup_connections(self)  # コネクションを設定
         self.settings_popup.show()
         self.main_manager.get_error_handler().log_message("UIManager.open_settings_popup finished")
 
@@ -85,11 +86,11 @@ class UIManager(IMainManagerAdapter):
         self.main_manager.get_error_handler().log_message("UIManager.set_translation_server_url finished")
 
     def set_local_path(self, path):
+        print(f"UIManager.set_local_path called with path={path}")
         self.main_manager.get_error_handler().log_message("UIManager.set_local_path called")
-        result = self.main_manager.set_local_path(path)
-        if result.success:
-            self.main_manager.get_error_handler().log_message(f"Local path set to {path}")
-            self.update_ui()
+        self.main_manager.set_local_path(path)
+        self.main_manager.get_error_handler().log_message(f"UIManager.set_local_path: Local path set to {path}")
+        self.update_ui()
         self.main_manager.get_error_handler().log_message("UIManager.set_local_path finished")
 
     def update_settings_popup(self):

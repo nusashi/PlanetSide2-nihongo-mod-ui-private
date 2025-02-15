@@ -34,3 +34,6 @@ class MockNetworkManager:
     def download_asset_content(self, repo_owner, repo_name, asset_name):
         # モックデータを返す
         return "app_version=1.1.0\ntranslation_version=1.0.0"
+
+    def set_local_path(self, path):
+        pass

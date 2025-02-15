@@ -41,13 +41,6 @@ from src.NetworkManager import RequestsNetworkManager
 from src.ConfigManager import JsonConfigManager
 from src.MockNetworkManager import MockNetworkManager
 
-from PySide6.QtWidgets import (
-    QApplication,
-    QMainWindow,
-    QPushButton,
-    QVBoxLayout,
-    QWidget,
-)
 
 if __name__ == "__main__":
     initialize_base_directory()

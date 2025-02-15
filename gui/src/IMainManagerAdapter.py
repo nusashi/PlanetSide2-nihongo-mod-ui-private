@@ -29,3 +29,7 @@ class IMainManagerAdapter(ABC):
     @abstractmethod
     def get_base_dir(self) -> str:
         pass
+
+    @abstractmethod
+    def set_local_path(self, path: str) -> None:
+        pass

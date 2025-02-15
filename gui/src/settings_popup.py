@@ -75,12 +75,19 @@ class SettingsPopup(QWidget):
         main_layout.addLayout(hbox_author)
         main_layout.addLayout(hbox_license)
         self.setLayout(main_layout)
-
     def setup_connections(self, ui_manager):
+        print("SettingsPopup.setup_connections: start")
         self.button_local_path.clicked.connect(lambda: self.open_file_dialog(ui_manager))
+        print("SettingsPopup.setup_connections: end")
 
     def open_file_dialog(self, ui_manager):
-        folder_path = QFileDialog.getExistingDirectory(self, "Select Directory")
+        print("SettingsPopup.open_file_dialog called")
+        print("SettingsPopup.open_file_dialog: before QFileDialog.getExistingDirectory")
+        folder_path = QFileDialog.getExistingDirectory(self, "Select Directory", options=QFileDialog.ShowDirsOnly)
+        print(f"SettingsPopup.open_file_dialog: after QFileDialog.getExistingDirectory, folder_path={folder_path}")
         if folder_path:
             self.lineedit_local_path.setText(folder_path)
+            print("SettingsPopup.open_file_dialog: calling ui_manager.set_local_path")
             ui_manager.set_local_path(folder_path)
+            print("SettingsPopup.open_file_dialog: ui_manager.set_local_path called")
+        print("SettingsPopup.open_file_dialog: end")
