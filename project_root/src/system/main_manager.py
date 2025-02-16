@@ -170,7 +170,7 @@ class MainManager:
 
         try:
             shutil.copy2(jp_data_dat_path, destination_dat_path)
-            shutil.copy2(jp_data_dat_path, destination_dir_path)
+            shutil.copy2(jp_data_dir_path, destination_dir_path)
             for destination_font_path in existing_font_paths:
                 shutil.copy2(font_path, destination_font_path)
             print("翻訳終了")
