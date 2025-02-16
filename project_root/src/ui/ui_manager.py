@@ -48,7 +48,6 @@ class UIManager(QObject):
         # SettingsPopupのコールバック設定
         self.settings_popup.set_button_local_path_callback(self.on_local_path_browse_clicked)
         # シグナルとスロットの接続
-        self.local_path_changed.connect(self.main_window.update_local_path_label)
         self.local_path_changed.connect(self.settings_popup.update_lineedit_local_path_text)
         self.app_update_server_url_changed.connect(self.settings_popup.update_lineedit_app_server_url_text)
         self.translation_update_server_url_changed.connect(self.settings_popup.update_lineedit_translation_server_url_text)
@@ -121,7 +120,6 @@ class UIManager(QObject):
     # UIの再描画
     def redraw(self):
         # MainManagerから最新の情報を取得してUIを更新
-        self.local_path_changed.emit(self.main_manager.local_path)
         self.app_update_server_url_changed.emit(self.main_manager.app_update_server_url)
         self.translation_update_server_url_changed.emit(self.main_manager.translation_update_server_url)
         self.launch_mode_changed.emit(self.main_manager.launch_mode)

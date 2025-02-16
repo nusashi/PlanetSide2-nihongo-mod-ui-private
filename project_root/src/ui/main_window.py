@@ -107,8 +107,6 @@ class MainWindow(QMainWindow):
         print("MainWindow.button_check_update initialized")
 
         # ローカルパス
-        self.label_local_path = QLabel("")
-        print("MainWindow.label_local_path initialized")
 
         # ステータス
         self.textedit_status = QTextEdit()
@@ -164,7 +162,6 @@ class MainWindow(QMainWindow):
         grid_version.addWidget(self.button_check_update, 2, 0, 2, 2)  # Span two columns
         grid_version.setRowStretch(2, 1)
         # ローカルパス (ラベル)
-        grid_version.addWidget(self.label_local_path, 3, 0, 1, 2)  # バージョン情報の下に追加
         groupbox_version.setLayout(grid_version)
         print("MainWindow.groupbox_version setup done")
 
@@ -325,9 +322,6 @@ class MainWindow(QMainWindow):
 
     def update_translation_version_label(self, text):
         self.label_translation_version.setText(text)
-
-    def update_local_path_label(self, text):
-        self.label_local_path.setText(text)
 
     def update_status_text(self, text):
         self.textedit_status.setText(text)
