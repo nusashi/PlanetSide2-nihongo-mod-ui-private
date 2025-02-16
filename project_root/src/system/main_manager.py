@@ -232,11 +232,10 @@ class MainManager:
             return None
 
     # 翻訳ファイルのダウンロード関数
-    def download_translation_file(self, destination_dir: str, progress_callback: Optional[Callable[[str, int, int, int], None]] = None) -> Optional[List[str]]:
+    def download_translation_file(self, progress_callback: Optional[Callable[[str, int, int, int], None]] = None) -> Optional[List[str]]:
         """
         翻訳ファイルとフォントファイルの最新版をダウンロードする。
         Args:
-            destination_dir: 保存先のディレクトリ。
             progress_callback: 進捗コールバック関数。
                 引数: ファイル名, 現在のファイル番号, ファイル総数, ダウンロード済みバイト数
         Returns:
@@ -264,7 +263,7 @@ class MainManager:
         for i, filename in enumerate(filenames):
             try:
                 file_path = self._github_resource_manager.download_asset(
-                    owner, repo, tag, filename, destination_dir, progress_callback=lambda fn, _, __, ds: progress_callback(fn, i + 1, num_files, ds) if progress_callback else None  # progress_callbackを渡す
+                    owner, repo, tag, filename, self._data_dir, progress_callback=lambda fn, _, __, ds: progress_callback(fn, i + 1, num_files, ds) if progress_callback else None  # progress_callbackを渡す
                 )
                 downloaded_files.append(file_path)
             except (requests.exceptions.RequestException, FileNotFoundError) as e:

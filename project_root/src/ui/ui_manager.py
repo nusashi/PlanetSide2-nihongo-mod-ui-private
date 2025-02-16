@@ -92,7 +92,7 @@ class UIManager(QObject):
 
     def on_update_translation_clicked(self):
         # TODO: ダウンロード処理、進捗表示
-        self.main_manager.download_translation_file("data")  # dataディレクトリ
+        self.main_manager.download_translation_file()  # dataディレクトリ
         self.status_text_changed.emit("翻訳のアップデートは未実装")
 
     def on_check_update_clicked(self):
