@@ -1,5 +1,10 @@
 # 定数宣言
 WINDOW_TITLE = "PS2日本語翻訳ツール"
+EN_DAT_FINE_NAME = "en_us_data.dat"
+EN_DIR_FILE_NAME = "en_us_data.dir"
+JP_DAT_FINE_NAME = "ja_jp_data.dat"
+JP_DIR_FILE_NAME = "ja_jp_data.dir"
+FONT_FILE_NAME = "MyFont.ttf"
 
 # config_key
 APP_VERSION = "app_version"
@@ -9,13 +14,17 @@ LOCAL_PATH = "local_path"
 APP_UPDATE_SERVER_URL = "app_server_url"
 TRANSLATION_UPDATE_SERVER_URL = "translation_server_url"
 
+# LaunchMode
+NORMAL_LAUNCH = 0
+STEAM_LAUNCH = 1
+
 # config_default
 DEFAULT_APP_VERSION = "1.0.0"
 DEFAULT_TRANSLATION_VERSION = "1.0.0"
-DEFAULT_LAUNCH_MODE = 1
+DEFAULT_LAUNCH_MODE = STEAM_LAUNCH
 DEFAULT_LOCAL_PATH = ""
-DEFAULT_APP_UPDATE_SERVER_URL = ""
-DEFAULT_TRANSLATION_UPDATE_SERVER_URL = ""
+DEFAULT_APP_UPDATE_SERVER_URL = "https://github.com/nusashi/PlanetSide2-nihongo-mod-ui/releases/latest"
+DEFAULT_TRANSLATION_UPDATE_SERVER_URL = "https://github.com/nusashi/PlanetSide2-nihongo-mod-api/releases/latest"
 
 
 # ラジオボタンレイアウト

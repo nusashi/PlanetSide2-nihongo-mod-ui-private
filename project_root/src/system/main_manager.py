@@ -1,45 +1,277 @@
+import os
+import subprocess
+import shutil
+from urllib.parse import urljoin, urlparse
+from typing import Callable, List, Optional, Tuple, Dict
+import requests
+from packaging import version  # バージョン比較に使用
 from src.const import const
 from src.system.config_manager import JsonConfigManager
+from src.system.github_resource_manager import GitHubResourceManager
 
 
 class MainManager:
-    def __init__(self):
+    def __init__(self, base_dir):
         print("MainManagerインスタンス作成")
         # インスタンス変数宣言
+        self._base_dir = base_dir
+        if not self._base_dir:
+            self._base_dir = os.path.dirname(os.path.abspath(__file__))
         self._next_app_version = const.DEFAULT_APP_VERSION
         self._next_translation_version = const.DEFAULT_TRANSLATION_VERSION
-        self._status_string = "" # ステータス
+        self._status_string = ""  # ステータス
         self._config_manager = JsonConfigManager()
-        # 初回起動対応
-        if self._config_manager.get_initial_config():
-            # TODO 初回起動時、チュートリアルポップアップを表示
-            pass
-
-        # アップデート確認
-        self.check_update()
-
-        # TODO 起動モード読み込み
-        # TODO 起動モード設定
-        # TODO 通常起動関数
-        # TODO Steam起動関数
-        # TODO ローカルパス確認関数
-        # TODO ローカルパス設定関数
-        # TODO AppUpdateServer疎通確認関数
-        # TODO TranslationUpdateServer疎通確認関数
-        # TODO dat&dir 置き換え関数
-        # TODO font 置き換え関数
-        # TODO 日本語化関数
-        # TODO
-        # TODO
-        # TODO
+        self._github_resource_manager = GitHubResourceManager()
         self.initialize()
 
     def initialize(self):
         print("初期化")
+        # 初回起動対応
+        if self._config_manager.get_initial_config():
+            # 初回起動時、チュートリアルポップアップを表示
+            # 使い方の説明とローカルパスの設定ポップアップ
+            pass
+        self._next_app_version = self.app_version
+        self._next_translation_version = self.translation_version
+        # アップデート確認
+        self.check_update()
+
+    def _check_version_update(self, server_url: str, current_version: str, next_version_attr: str) -> Tuple[Optional[str], Optional[str]]:
+        """
+        バージョンアップデートを確認する共通関数。
+        Args:
+            server_url: アップデートサーバーの URL。
+            current_version: 現在のバージョン。
+            next_version_attr: 次のバージョンを格納する属性名。
+        Returns:
+            (エラーメッセージ, バージョン) のタプル。
+            エラーがない場合はエラーメッセージは None。
+            アップデートがない場合は現在のバージョン、ある場合は最新のバージョンを返す。
+        """
+        repo_info = self._github_resource_manager._parse_github_url(server_url)
+        if not repo_info:
+            return f"無効なアップデートサーバーURL: {server_url}", None
+        latest_tag = self._github_resource_manager.get_latest_tag(repo_info["owner"], repo_info["repo"])
+        if not latest_tag:
+            return f"最新のタグを取得できませんでした: {server_url}", None
+        try:
+            if version.parse(latest_tag) > version.parse(current_version):
+                setattr(self, next_version_attr, latest_tag)
+                return None, latest_tag  # (エラーなし, 最新バージョン)
+            else:
+                return None, current_version  # (エラーなし, 現在のバージョン)
+        except version.InvalidVersion:
+            return f"無効なバージョンタグが見つかりました: {latest_tag}", None
 
     def check_update(self):
-        # TODO アップデート確認関数
-        pass
+        # Appのアップデート確認
+        if not self.check_app_update_server_connection():
+            print("Appアップデートサーバーに接続できません")
+            app_error, self._next_app_version = "Appアップデートサーバーに接続できません", None
+        else:
+            app_error, self._next_app_version = self._check_version_update(self.app_update_server_url, self.app_version, "next_app_version")
+
+        # 翻訳のアップデート確認
+        if not self.check_translation_update_server_connection():
+            print("翻訳アップデートサーバーに接続できません")
+            translation_error, self._next_translation_version = "翻訳アップデートサーバーに接続できません", None
+        else:
+            translation_error, self._next_translation_version = self._check_version_update(self.translation_update_server_url, self.translation_version, "next_translation_version")
+
+        # 結果の表示 (UI 更新など)
+        if app_error:
+            print(app_error)  # TODO ステータスラベルの更新?
+        else:
+            print("次のAppバージョン:", self._next_app_version)
+
+        if translation_error:
+            print(translation_error)  # TODO ステータスラベルの更新?
+        else:
+            print("次の翻訳バージョン:", self._next_translation_version)
+
+    # ゲーム起動
+    def try_game_launch(self) -> bool:
+        print("ゲーム起動")
+        if self.launch_mode == const.NORMAL_LAUNCH:
+            if os.path.exists(self.local_path + "/LaunchPad.exe"):
+                subprocess.Popen(self.local_path + "/LaunchPad.exe")
+                return True
+            else:
+                error_message = "LaunchPad.exe が見つかりません。"
+                print(error_message)
+                return False
+        elif self.launch_mode == const.STEAM_LAUNCH:
+            os.startfile(const.STEAM_GAME_URI)
+            return True
+        else:
+            print("不正な起動モードです")
+            return False
+
+    # 日本語化
+    def try_translation(self) -> bool:
+        print("翻訳開始")
+        data_path = os.path.join(self._base_dir, "data")
+        # data フォルダが存在しない場合はエラー
+        if not os.path.isdir(data_path):
+            print(f"{data_path} フォルダが存在しません")
+            return False
+
+        jp_data_dat_path = os.path.join(data_path, const.JP_DAT_FINE_NAME)
+        if not os.path.exists(jp_data_dat_path):
+            print(f"{const.JP_DAT_FINE_NAME} が存在しません")
+            return False
+
+        jp_data_dir_path = os.path.join(data_path, const.JP_DIR_FILE_NAME)
+        if not os.path.exists(jp_data_dir_path):
+            print(f"{const.JP_DIR_FILE_NAME} が存在しません")
+            return False
+
+        font_path = os.path.join(data_path, const.FONT_FILE_NAME)
+        if not os.path.exists(font_path):
+            print(f"{const.FONT_FILE_NAME} が存在しません")
+            return False
+
+        locale_path = os.path.join(self.local_path, "Locale")
+        # Locale フォルダが存在しない場合はエラー
+        if not os.path.isdir(locale_path):
+            print(f"{locale_path} フォルダが存在しません")
+            return False
+
+        destination_dat_path = os.path.join(locale_path, const.EN_DAT_FINE_NAME)
+        if not os.path.exists(destination_dat_path):
+            print(f"{const.EN_DAT_FINE_NAME} が存在しません")
+            return False
+
+        destination_dir_path = os.path.join(locale_path, const.EN_DIR_FILE_NAME)
+        if not os.path.exists(destination_dir_path):
+            print(f"{const.EN_DIR_FILE_NAME} が存在しません")
+            return False
+
+        ui_resource_fonts_path = os.path.join(self.local_path, "UI", "Resource", "Fonts")
+        # Fonts フォルダが存在しない場合はエラー
+        if not os.path.isdir(ui_resource_fonts_path):
+            print(f"{ui_resource_fonts_path} フォルダが存在しません")
+            return False
+
+        # TODO RemoteConfigなどで、対応が出来るようにしたい
+        # チェックするフォントのリスト (ファイル名のみ)
+        required_fonts = [
+            "Geo-Md.ttf",
+            "Ps2GeoMdRosaVerde.ttf",
+        ]
+        existing_font_paths = []  # 存在が確認されたフォントのパスを格納するリスト
+
+        for font_name in required_fonts:
+            destination_font_path = os.path.join(ui_resource_fonts_path, font_name)
+            if os.path.exists(destination_font_path):
+                existing_font_paths.append(destination_font_path)  # 存在したらリストに追加
+            else:
+                print(f"{font_name} が存在しません")
+                return False
+
+        try:
+            shutil.copy2(jp_data_dat_path, destination_dat_path)
+            shutil.copy2(jp_data_dat_path, destination_dir_path)
+            for destination_font_path in existing_font_paths:
+                shutil.copy2(font_path, destination_font_path)
+            print("翻訳終了")
+            return True
+        except Exception as e:
+            print(f"翻訳失敗 {str(e)}")
+            return False
+
+    # AppUpdateServer疎通確認関数
+    def check_app_update_server_connection(self) -> bool:
+        """
+        アプリケーションアップデートサーバーへの疎通確認を行う。
+        """
+        repo_info = self._github_resource_manager._parse_github_url(self.app_update_server_url)
+        if not repo_info:
+            print("無効なAppアップデートサーバーURL")
+            return False
+        return self._github_resource_manager.check_connection(repo_info["owner"], repo_info["repo"])
+
+    # TranslationUpdateServer疎通確認関数
+    def check_translation_update_server_connection(self) -> bool:
+        """
+        翻訳アップデートサーバーへの疎通確認を行う。
+        """
+        repo_info = self._github_resource_manager._parse_github_url(self.translation_update_server_url)
+        if not repo_info:
+            print("無効な翻訳アップデートサーバーURL")
+            return False
+        return self._github_resource_manager.check_connection(repo_info["owner"], repo_info["repo"])
+
+    # 最新のAppダウンロード
+    def download_app_file(self, destination_dir: str, progress_callback: Optional[Callable[[str, int, int, int], None]] = None) -> Optional[str]:
+        """
+        アプリケーションの最新版をダウンロードする。
+        Args:
+            destination_dir: 保存先のディレクトリ。
+            progress_callback: 進捗コールバック関数。
+        Returns:
+            ダウンロードしたファイルのパス。失敗した場合は None。
+        """
+        repo_info = self._github_resource_manager._parse_github_url(self.app_update_server_url)
+        if not repo_info:
+            print("無効なAppアップデートサーバーURL")
+            return None
+        owner = repo_info["owner"]
+        repo = repo_info["repo"]
+        tag = self._github_resource_manager.get_latest_tag(owner, repo)
+
+        if not tag:
+            print("Appアップデート用の最新タグを取得できませんでした")
+            return None
+        # TODO: ファイル名を config などから取得するようにする
+        filename = "PlanetSide2-nihongo-mod-ui.exe"  # 仮のファイル名。実際には設定ファイルなどから取得
+        try:
+            file_path = self._github_resource_manager.download_asset(owner, repo, tag, filename, destination_dir, progress_callback)
+            return file_path
+        except Exception as e:
+            print(f"Appファイルのダウンロードに失敗しました: {e}")
+            return None
+
+    # 翻訳ファイルのダウンロード関数
+    def download_translation_file(self, destination_dir: str, progress_callback: Optional[Callable[[str, int, int, int], None]] = None) -> Optional[List[str]]:
+        """
+        翻訳ファイルとフォントファイルの最新版をダウンロードする。
+        Args:
+            destination_dir: 保存先のディレクトリ。
+            progress_callback: 進捗コールバック関数。
+                引数: ファイル名, 現在のファイル番号, ファイル総数, ダウンロード済みバイト数
+        Returns:
+            ダウンロードしたファイルのパスのリスト。失敗した場合は None。
+        """
+        repo_info = self._github_resource_manager._parse_github_url(self.translation_update_server_url)
+        if not repo_info:
+            print("無効な翻訳アップデートサーバーURL")
+            return None
+        owner = repo_info["owner"]
+        repo = repo_info["repo"]
+        tag = self._github_resource_manager.get_latest_tag(owner, repo)
+
+        if not tag:
+            print("翻訳アップデート用の最新タグを取得できませんでした")
+            return None
+        # ダウンロードするファイル名のリスト
+        filenames = [
+            const.JP_DAT_FINE_NAME,
+            const.JP_DIR_FILE_NAME,
+            # const.FONT_FILE_NAME, # TODO どうしようかな...多分要らない
+        ]
+        downloaded_files = []
+        num_files = len(filenames)  # ファイルの総数
+        for i, filename in enumerate(filenames):
+            try:
+                file_path = self._github_resource_manager.download_asset(
+                    owner, repo, tag, filename, destination_dir, progress_callback=lambda fn, _, __, ds: progress_callback(fn, i + 1, num_files, ds) if progress_callback else None  # progress_callbackを渡す
+                )
+                downloaded_files.append(file_path)
+            except (requests.exceptions.RequestException, FileNotFoundError) as e:
+                print(f"{filename} のダウンロードに失敗しました: {e}")
+                return None  # 一つでも失敗したら None を返す
+        return downloaded_files
 
     @property
     def status_string(self):

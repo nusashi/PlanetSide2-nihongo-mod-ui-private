@@ -38,4 +38,4 @@ setup_module_path()
 if __name__ == "__main__":
     initialize_base_directory()
 
-    main_manager = MainManager()
+    main_manager = MainManager(os.environ["BASE_DIR"])
