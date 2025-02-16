@@ -1,7 +1,7 @@
 import json
 import os
 from typing import Optional, Any
-from src.const import const
+from const import const
 
 
 class JsonConfigManager:

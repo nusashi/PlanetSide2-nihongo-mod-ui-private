@@ -5,9 +5,9 @@ from urllib.parse import urljoin, urlparse
 from typing import Callable, List, Optional, Tuple, Dict
 import requests
 from packaging import version  # バージョン比較に使用
-from src.const import const
-from src.system.config_manager import JsonConfigManager
-from src.system.github_resource_manager import GitHubResourceManager
+from const import const
+from system.config_manager import JsonConfigManager
+from system.github_resource_manager import GitHubResourceManager
 
 
 class MainManager:
@@ -20,7 +20,7 @@ class MainManager:
         self._next_app_version = const.DEFAULT_APP_VERSION
         self._next_translation_version = const.DEFAULT_TRANSLATION_VERSION
         self._status_string = ""  # ステータス
-        self._config_manager = JsonConfigManager()
+        self._config_manager = JsonConfigManager(base_dir)
         self._github_resource_manager = GitHubResourceManager()
         self.initialize()
 

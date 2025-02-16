@@ -3,6 +3,8 @@ import os
 from pathlib import Path
 
 from system.main_manager import MainManager
+from ui.ui_manager import UIManager
+
 
 def setup_module_path():
     """モジュール検索パスを設定する"""
@@ -39,3 +41,5 @@ if __name__ == "__main__":
     initialize_base_directory()
 
     main_manager = MainManager(os.environ["BASE_DIR"])
+    ui_manager = UIManager(main_manager)
+    ui_manager.run()
