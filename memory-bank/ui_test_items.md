@@ -24,12 +24,10 @@
     3.  `combobox_launch_mode`で選択した値が、`config.json`の`launch_mode`に保存される。
     4.  次回起動時に、保存された`launch_mode`の値がUIに反映される。
 *   **関連ファイルとメソッド:**
-    *   `gui/src/MainWindow.py`: `init_ui`, `setup_layout`, `launch_mode_changed`, `set_launch_mode_on_startup`
-    *   `gui/src/UIManager.py`: `set_launch_mode`, `update_ui`
-    *   `gui/src/MainManager.py`: `set_launch_mode`
-    *   `gui/src/Logic/set_launch_mode_logic.py`: `execute`
-    *   `gui/src/Logic/get_launch_mode_logic.py`: `execute`
-    *   `gui/src/ConfigManager.py`: `get_config`, `set_config`, `save_config`
+    *   `project_root/src/ui/main_window.py`: `init_ui`, `setup_layout`, `_on_radio_normal_clicked`, `_on_radio_steam_clicked`, `_on_combobox_launch_mode_changed`
+    *   `project_root/src/ui/ui_manager.py`: `on_radio_normal_clicked`, `on_radio_steam_clicked`, `on_launch_mode_changed`, `update_launch_mode_ui`
+    *   `project_root/src/system/main_manager.py`: `launch_mode` (プロパティ)
+    *   `project_root/src/system/config_manager.py`: `get_config`, `set_config`, `save_config`
 
 ### ゲーム起動
 
@@ -53,10 +51,9 @@
     3.  `LaunchPad.exe`が通常モードで起動する。
     4.  `LaunchPad.exe`がSteam経由で起動する。
 *   **関連ファイルとメソッド:**
-    *   `gui/src/MainWindow.py`: `launch_game`
-    *   `gui/src/UIManager.py`: `launch_game`
-    *   `gui/src/MainManager.py`: `launch_game`
-    *   `gui/src/Logic/game_launch_logic.py`: `execute`
+    *   `project_root/src/ui/main_window.py`: `_on_button_game_launch_clicked`
+    *   `project_root/src/ui/ui_manager.py`: `on_game_launch_clicked`
+    *   `project_root/src/system/main_manager.py`: `try_game_launch`
 
 ### ファイル置換
 
@@ -72,12 +69,9 @@
     1.  エラーメッセージが表示され、ファイルはコピーされない。
     2.  `ja_jp_data.dat`、`ja_jp_data.dir`、`MyFont.ttf`がゲームフォルダにコピーされる。
 *   **関連ファイルとメソッド:**
-    *   `gui/src/MainWindow.py`: `copy_translation_files`
-    *   `gui/src/UIManager.py`: `copy_translation_files`
-    *   `gui/src/MainManager.py`: `copy_translation_files`
-    *   `gui/src/Logic/copy_dat_file_logic.py`: `execute`
-    *   `gui/src/Logic/copy_dir_file_logic.py`: `execute`
-    *   `gui/src/Logic/copy_font_file_logic.py`: `execute`
+    *   `project_root/src/ui/main_window.py`: `_on_button_replace_translation_clicked`
+    *   `project_root/src/ui/ui_manager.py`: `on_replace_translation_clicked`
+    *   `project_root/src/system/main_manager.py`: `try_translation`
 
 ### バージョン情報/アップデート
 
@@ -101,15 +95,10 @@
     3.  翻訳ファイルのバージョンが古い場合、「更新」ボタンが表示される。
     4.  アップデート処理が実行される。
 *   **関連ファイルとメソッド:**
-    *   `gui/src/MainWindow.py`: `check_updates`, `init_ui`
-    *   `gui/src/UIManager.py`: `check_updates`, `update_data`
-    *   `gui/src/MainManager.py`: `check_for_updates`, `check_update_gui`, `check_update_translation`, `update_gui`, `update_translation`, `get_app_version`, `get_translation_version`
-    *   `gui/src/Logic/check_update_gui_logic.py`: `execute`
-    *   `gui/src/Logic/check_update_translation_logic.py`: `execute`
-    *   `gui/src/Logic/download_gui_logic.py`: `execute`
-    *   `gui/src/Logic/download_translation_logic.py`: `execute`
-    *   `gui/src/Logic/get_app_version_logic.py`: `execute`
-    *   `gui/src/Logic/get_translation_version_logic.py`: `execute`
+    *   `project_root/src/ui/main_window.py`: `init_ui`, `update_app_version_label`, `update_translation_version_label`, `_on_button_update_app_clicked`, `_on_button_update_translation_clicked`, `_on_button_check_update_clicked`
+    *   `project_root/src/ui/ui_manager.py`: `on_update_app_clicked`, `on_update_translation_clicked`, `on_check_update_clicked`, `show_update_app_button_changed`, `show_update_translation_button_changed`
+    *   `project_root/src/system/main_manager.py`: `check_update`, `download_app_file`, `download_translation_file`, `app_version`, `translation_version`, `next_app_version`, `next_translation_version`
+    *   `project_root/src/system/github_resource_manager.py`: `check_connection`, `get_latest_tag`, `download_asset`
 
 ### ステータス
 
@@ -125,8 +114,9 @@
     1.  処理の進捗状況や結果がステータス表示に表示される。
     2.  エラーが発生した場合、エラーメッセージが表示される。
 *   **関連ファイルとメソッド:**
-    *   `gui/src/MainWindow.py`: `init_ui`, `setup_layout`
-    *   `gui/src/ErrorHandler.py`: `handle_error`, `log_message`
+    *   `project_root/src/ui/main_window.py`: `init_ui`, `setup_layout`, `update_status_text`
+    *   `project_root/src/ui/ui_manager.py`: `status_text_changed`
+    *   `project_root/src/system/main_manager.py`: `status_string`
 
 ### 設定
 
@@ -138,9 +128,9 @@
 *   **期待される結果:**
     1.  設定ポップアップが表示される。
 *   **関連ファイルとメソッド:**
-    *   `gui/src/MainWindow.py`: `open_settings_popup`
-    *   `gui/src/UIManager.py`: `open_settings_popup`
-    *   `gui/src/settings_popup.py`
+    *   `project_root/src/ui/main_window.py`: `_on_button_settings_clicked`
+    *   `project_root/src/ui/ui_manager.py`: `on_settings_clicked`
+    *   `project_root/src/ui/settings_popup.py`
 
 ### ヘルプ
 
@@ -152,8 +142,9 @@
 *   **期待される結果:**
     1.  ヘルプポップアップが表示される。
 *   **関連ファイルとメソッド:**
-    *   `gui/src/MainWindow.py`: `open_help`
-    *   `gui/src/help_popup.py`
+    *   `project_root/src/ui/main_window.py`: `_on_button_help_clicked`
+    *   `project_root/src/ui/ui_manager.py`: `on_help_clicked`
+    *   `project_root/src/ui/help_popup.py`
 
 ### ローカルパス
 
@@ -169,12 +160,10 @@
     1.  `config.json`に保存されているローカルパスがラベルに表示される。
     2.  設定ポップアップでローカルパスを変更すると、ラベルの表示も更新される。
 *   **関連ファイルとメソッド:**
-    *   `gui/src/MainWindow.py`: `init_ui`, `setup_layout`, `update_local_path`
-    *   `gui/src/UIManager.py`: `update_ui`, `set_local_path`
-    *   `gui/src/MainManager.py`: `set_local_path`, `get_config`
-    *   `gui/src/Logic/get_local_path_logic.py`: `execute`
-    *   `gui/src/Logic/set_local_path_logic.py`: `execute`
-    *   `gui/src/ConfigManager.py`: `get_config`, `set_config`, `save_config`
+    *   `project_root/src/ui/main_window.py`: `init_ui`, `setup_layout`, `update_local_path_label`
+    *   `project_root/src/ui/ui_manager.py`: `local_path_changed`
+    *   `project_root/src/system/main_manager.py`: `local_path`
+    *   `project_root/src/system/config_manager.py`: `get_config`, `set_config`, `save_config`
 
 ## SettingsPopup
 
@@ -196,11 +185,10 @@
     2.  選択したフォルダのパスが`lineedit_local_path`に表示される。
     3.  `lineedit_local_path`の内容が`config.json`の`local_path`に保存される。
 *   **関連ファイルとメソッド:**
-    *   `gui/src/settings_popup.py`: `init_ui`, `setup_layout`, `open_file_dialog`, `setup_connections`
-    *   `gui/src/UIManager.py`: `set_local_path`, `update_settings_popup`
-    *   `gui/src/MainManager.py`: `set_local_path`, `get_config`
-    *   `gui/src/Logic/set_local_path_logic.py`: `execute`
-    *   `gui/src/ConfigManager.py`: `set_config`, `save_config`
+    *   `project_root/src/ui/settings_popup.py`: `init_ui`, `setup_layout`, `_on_button_local_path_clicked`, `update_lineedit_local_path_text`
+    *   `project_root/src/ui/ui_manager.py`: `on_local_path_browse_clicked`, `local_path_changed`
+    *   `project_root/src/system/main_manager.py`: `local_path`
+    *   `project_root/src/system/config_manager.py`: `set_config`, `save_config`
 
 ### サーバーURL設定
 
@@ -212,12 +200,10 @@
 *   **期待される結果:**
     1.  入力したURLが`config.json`に保存される。
 *   **関連ファイルとメソッド:**
-    *   `gui/src/settings_popup.py`: `init_ui`, `setup_layout`
-    *   `gui/src/UIManager.py`: `set_app_server_url`, `set_translation_server_url`, `update_settings_popup`
-    *   `gui/src/MainManager.py`: `set_app_server_url`, `set_translation_server_url`, `get_config`
-    *   `gui/src/Logic/set_gui_server_url_logic.py`: `execute`
-    *   `gui/src/Logic/set_translation_server_url_logic.py`: `execute`
-    *   `gui/src/ConfigManager.py`: `set_config`, `save_config`
+    *   `project_root/src/ui/settings_popup.py`: `init_ui`, `setup_layout`, `update_lineedit_app_server_url_text`, `update_lineedit_translation_server_url_text`
+    *   `project_root/src/ui/ui_manager.py`: `app_update_server_url_changed`, `translation_update_server_url_changed`
+    *   `project_root/src/system/main_manager.py`: `app_update_server_url`, `translation_update_server_url`
+    *   `project_root/src/system/config_manager.py`: `set_config`, `save_config`
 
 ## HelpPopup
 
@@ -239,4 +225,4 @@
     2.  テキストが折り返されて表示される。
     3.  テキストが左上に配置されている。
 *   **関連ファイルとメソッド:**
-    *   `gui/src/help_popup.py`: `__init__`
+    *   `project_root/src/ui/help_popup.py`: `__init__`

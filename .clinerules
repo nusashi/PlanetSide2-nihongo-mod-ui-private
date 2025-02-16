@@ -6,94 +6,15 @@
 *   エラー処理を適切に行い、エラーメッセージを詳細にする。
 *   UI は、ユーザーが使いやすいように設計する。
 *   設定ファイルは、JSON 形式で管理する。
-*   MOD の導入・管理、アップデートを自動化する。
-*   MOD の情報を共有するプラットフォームを構築する。
-*   初回起動時のチュートリアルを実装する。
-*   チュートリアルポップアップを表示する機能を実装する。
 *   ファイルパスを環境変数から取得するようにする。
-*   `replace_files`メソッドをリファクタリングする。
-*   `check`変数の役割を明確にする。
-*   コードの修正を試みる前に、想像でコードを実行して問題ないかを確認する。
 *   `replace_in_file`の使用は今後も永続的に禁止する。
-
-# Logicモジュールに関するルール
-
-*   Logicモジュールは、`MainManager`から呼び出され、特定のビジネスロジックを実行する。
-*   Logicモジュールは、`MainManager`が提供するインターフェースを介して、`ConfigManager`、`NetworkManager`、`GameLauncher`、`FileOperations`の機能を利用する。
-*   Logicモジュールは、原則としてGUIと直接やり取りしない。GUIとのやり取りは、`MainManager`が担当する。
-*   Logicモジュールのファイル名は、`*_logic.py`とする。
-*   Logicモジュールは、可能な限り細分化し、単一の責任を持つようにする。
-*   Logicモジュールは、イベントを発行して`MainManager`に処理完了を通知する。（具体的なイベントの仕組みは未定）
-
-# 今回の作業で得られた知見
-
-*   Logicモジュールは、`ILogic`インターフェースを継承し、`execute`メソッドを持つ必要がある。
-*   `MainManager`からLogicモジュールを呼び出す際は、`self.Logic["モジュール名"].execute(...)`の形にする。
-*   テストコード内でモックを使用する際は、モックの設定と期待される呼び出しを正しく記述する必要がある。
-*   `replace_in_file`は、SEARCHブロックの内容がファイルの内容と完全に一致しないと失敗する。
-*   `write_to_file`は、ファイル全体を書き換えるため、注意が必要である。
-*   `config.json`のキーを変更する際は、既存の`config.json`との互換性を考慮し、移行処理を実装する必要がある。
-*   Logicモジュールの`execute`メソッドの戻り値は、`LogicResult`オブジェクトであり、`success`属性と`error`属性を持つ。
-*   `ErrorHandler`クラスに`log_message`メソッドを追加することで、ログ出力を一元化できる。
-*   `MainManager`クラスに`get_error_handler`メソッドを追加することで、Logicモジュールから`ErrorHandler`のインスタンスを取得できる。
-*   `UIManager`クラスに`get_main_window`メソッドを追加することで、`MainManager`から`MainWindow`のインスタンスを取得できる。
-*   exe化された環境では、`os.environ["BASE_DIR"]`はexeファイルと同じディレクトリを指す。
-*   `ConfigManager`の`config_file`のデフォルト値は、exe化後のパスを考慮して設定する必要がある。
-*   `MainManager.py`実行時に発生する`ModuleNotFoundError`は、以下の手順で修正できる。
-    1.  ~~`MainManager.py`の先頭に`sys.path.append(str(Path(__file__).resolve().parent.parent))`を追加する。~~
-    2.  ~~`MainManager.py`内のLogicモジュールのインポート文を、`src.Logic.*`の形式に修正する。~~
-    3.  ~~`gui/src/Logic/__init__.py`を作成し、`from src.Logic.ILogic import ILogic`と`from src.Logic.LogicResult import LogicResult`を記述する。~~
-    4.  ~~各Logicモジュール内のインポート文を、`src.*`の形式に修正する。~~
-    5.  ~~必要に応じて、他のモジュール内のインポート文も修正する。~~
+*   `write_to_file`は、ファイル全体を書き換える場合にのみ使用する。
+*   `MainManager.py`で`sys.path`を操作しない。
 *   PySide6で`QIcon`は`PySide6.QtGui`から、`QFontMetrics`も`PySide6.QtGui`からインポートする。
 *   `QSystemTrayIcon`は`PySide6.QtWidgets`からインポートする。
-*   `MainManager.py`で`sys.path`を操作しない。
-*   Logicモジュール内でのインポートは`src.*`形式を使用する。
-*   `MainManager.py`内でのLogicモジュールのインポートは`gui.src.Logic.*`形式を使用する。
-*   `IMainManagerAdapter`インターフェースに`get_base_dir`メソッドを追加し、Logicモジュールはこれを利用して`base_dir`を取得する。
-*   `MockNetworkManager`を使用する場合は、`RequestsNetworkManager`用のメソッド呼び出しを`MockNetworkManager`用に修正する。
 *   `apply_diff`ツールの`start_line`と`end_line`は、ファイルの現在の行数に合わせて指定する必要がある。
 *   Architectモードでは`.md`ファイルしか編集できない。
 *   Codeモードでは、ファイルの作成、読み込み、書き込み、`apply_diff`による編集が可能。
-# テストコードに関する知見
-
-*   `MockGUI` クラスは `IMainManagerAdapter` インターフェースを実装する必要がある。
-*   `MockGUI` クラスの各メソッドは、`pass` で実装する。（値を返す必要がないため）
-*   `test_logic_integration` メソッドでは、`Logic` モジュールの `execute` メソッドをモック化し、`return_value` を設定する。
-*   `test_logic_integration` メソッドでは、`mock_gui_app` に対するアサーションは不要。
-*   `check_gui_server_status` と `check_translation_server_status` のモックは、`success`、`status_code`、`error_message` 属性を持つオブジェクトを返す必要がある。
-*   `get_app_version` と `get_translation_version` のモックは、`success` と `value` 属性を持つオブジェクトを返す必要がある。
-* 今後は、`write_to_file` ツールを積極的に使用し、`replace_in_file` は使用しない。
-
-# GUIに関する知見
-
-*   ~~`preview_gui.py`を使って、UIの変更を迅速に確認しながら作業を進める。~~ `preview_gui.py`はUIの確認用であり、`MainWindow.py`に直接UIを実装する。
-*   `replace_in_file`を使用する際は、SEARCHブロックを正確に記述する。
-*   `write_to_file`は、ファイル全体を書き換える場合にのみ使用する。
-*   UIの変更後は、必ず`preview_gui.py`を実行して表示を確認する。
-*   設定ポップアップとヘルプポップアップは、`QWidget`を継承して作成する。
-*   ポップアップの外側をクリックしたときに閉じる処理は、後で実装する。
-*   ボタンのサイズは、`sizeHint`で取得した推奨サイズを基に、`setFixedSize`または`setFixedHeight`で設定する。
-*   ラベルのテキストが長すぎる場合は、省略記号 (...) で表示する。(今後の課題)
-*   更新ボタンは、`setVisible`で表示/非表示を切り替える。
-*   ステータスボックスの高さは、`QFontMetrics`を使って計算し、`setFixedHeight`で設定する。
-*   ウィンドウサイズは`setFixedSize`で固定し、最大化は禁止する。
-*   レイアウトは`QGroupBox`、`QVBoxLayout`、`QHBoxLayout`、`QGridLayout`を組み合わせて作成する
-*   `QIcon`でボタンにアイコンを設定できる
-*   `QLabel`の`setAlignment`でテキストの配置を調整できる
-*   `QLabel`の`setWordWrap`でテキストの折り返しを有効にできる
-* `QMainWindow`を使用する際は、`QWidget`を作成し、そのウィジェットにレイアウトを設定し、`setCentralWidget`メソッドで`QMainWindow`の中心ウィジェットとして設定する必要がある。
-
-# UIとビジネスロジックの接続
-
-*   `MainManager`はGUIに依存しない。
-*   `MainWindow`は`IMainManagerAdapter`インターフェースを実装したクラス(`UIManager`)を介して`MainManager`とやり取りする。
-*   `UIManager`は`MainManager`の`run`メソッドから呼び出され、GUIを初期化する。
-*   `MainWindow`のイベントハンドラは、`UIManager`のメソッドを呼び出す。
-*   `UIManager`は、`MainManager`のLogicモジュールの`execute`メソッドを呼び出して、ビジネスロジックを実行する。
-*   `UIManager`は、`MainManager`から受け取った情報や、設定ファイル(`config.json`)の内容を基に、`MainWindow`のUI要素を更新する (`update_ui`メソッド)。
-
-# 計画策定
-
-*   処理を考える際には、mermaid記法で記述されたクラス図（依存関係）を確認し、モジュール間の関係性を把握する。
-*   クラス図は、`memory-bank/systemPatterns.md`に保存されている。必要に応じて、最新の状態に更新する。
+*   `MainManager` がビジネスロジックを担当する。
+*   `UIManager` は `MainManager` と GUI の間のインターフェースとして機能し、カスタムシグナルを使って通信する。
+*   UIの更新は、`UIManager` のカスタムシグナルを介して行う。
