@@ -7,7 +7,7 @@ from const import const
 class JsonConfigManager:
     def __init__(self, base_dir: str):
         self.initial_config_flag = False
-        self.config_file = os.path.join(base_dir, "data", "config.json")
+        self.config_file = os.path.join(base_dir, "config.json")
         self.config: dict[str, Any] = {}
         self.load_config()
 

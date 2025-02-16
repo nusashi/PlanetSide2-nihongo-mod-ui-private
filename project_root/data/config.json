@@ -1,0 +1,8 @@
+{
+    "app_version": "1.0.0",
+    "translation_version": "1.0.0",
+    "launch_mode": 0,
+    "local_path": "D:\\SteamLibrary\\steamapps\\common\\PlanetSide 2",
+    "app_server_url": "https://github.com/nusashi/PlanetSide2-nihongo-mod-ui/releases/latest",
+    "translation_server_url": "https://github.com/nusashi/PlanetSide2-nihongo-mod-api/releases/latest"
+}

@@ -11,16 +11,16 @@ from system.github_resource_manager import GitHubResourceManager
 
 
 class MainManager:
-    def __init__(self, base_dir):
+    def __init__(self, data_dir):
         print("MainManagerインスタンス作成")
         # インスタンス変数宣言
-        self._base_dir = base_dir
-        if not self._base_dir:
-            self._base_dir = os.path.dirname(os.path.abspath(__file__))
+        self._data_dir = data_dir
+        if not self._data_dir:
+            self._data_dir = os.path.dirname(os.path.abspath(__file__))
         self._next_app_version = const.DEFAULT_APP_VERSION
         self._next_translation_version = const.DEFAULT_TRANSLATION_VERSION
         self._status_string = ""  # ステータス
-        self._config_manager = JsonConfigManager(base_dir)
+        self._config_manager = JsonConfigManager(data_dir)
         self._github_resource_manager = GitHubResourceManager()
         self.initialize()
 
@@ -110,23 +110,22 @@ class MainManager:
     # 日本語化
     def try_translation(self) -> bool:
         print("翻訳開始")
-        data_path = os.path.join(self._base_dir, "data")
         # data フォルダが存在しない場合はエラー
-        if not os.path.isdir(data_path):
-            print(f"{data_path} フォルダが存在しません")
+        if not os.path.isdir(self._data_dir):
+            print(f"{self._data_dir} フォルダが存在しません")
             return False
 
-        jp_data_dat_path = os.path.join(data_path, const.JP_DAT_FINE_NAME)
+        jp_data_dat_path = os.path.join(self._data_dir, const.JP_DAT_FINE_NAME)
         if not os.path.exists(jp_data_dat_path):
             print(f"{const.JP_DAT_FINE_NAME} が存在しません")
             return False
 
-        jp_data_dir_path = os.path.join(data_path, const.JP_DIR_FILE_NAME)
+        jp_data_dir_path = os.path.join(self._data_dir, const.JP_DIR_FILE_NAME)
         if not os.path.exists(jp_data_dir_path):
             print(f"{const.JP_DIR_FILE_NAME} が存在しません")
             return False
 
-        font_path = os.path.join(data_path, const.FONT_FILE_NAME)
+        font_path = os.path.join(self._data_dir, const.FONT_FILE_NAME)
         if not os.path.exists(font_path):
             print(f"{const.FONT_FILE_NAME} が存在しません")
             return False
