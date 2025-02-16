@@ -135,10 +135,6 @@ class MainWindow(QMainWindow):
         self.button_help.setStyleSheet("QPushButton { background-color: transparent; border: none; }")
         print("MainWindow.button_help initialized")
 
-        # コンボボックス
-        self.combobox_launch_mode = QComboBox()
-        print("MainWindow.combobox_launch_mode initialized")
-
         print("MainWindow.init_ui finished")
 
     def setup_layout(self):
@@ -148,7 +144,6 @@ class MainWindow(QMainWindow):
         hbox_launch_mode = QHBoxLayout()
         hbox_launch_mode.addWidget(self.radio_normal)
         hbox_launch_mode.addWidget(self.radio_steam)
-        hbox_launch_mode.addWidget(self.combobox_launch_mode)
         groupbox_launch_mode.setLayout(hbox_launch_mode)
         groupbox_launch_mode.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         print("MainWindow.groupbox_launch_mode setup done")
@@ -166,7 +161,8 @@ class MainWindow(QMainWindow):
         grid_version.addWidget(self.button_update_app, 0, 1)
         grid_version.addWidget(self.label_translation_version, 1, 0)
         grid_version.addWidget(self.button_update_translation, 1, 1)
-        grid_version.addWidget(self.button_check_update, 2, 0, 1, 2)  # Span two columns
+        grid_version.addWidget(self.button_check_update, 2, 0, 2, 2)  # Span two columns
+        grid_version.setRowStretch(2, 1)
         # ローカルパス (ラベル)
         grid_version.addWidget(self.label_local_path, 3, 0, 1, 2)  # バージョン情報の下に追加
         groupbox_version.setLayout(grid_version)
@@ -212,7 +208,6 @@ class MainWindow(QMainWindow):
         self.button_check_update_callback = None
         self.button_settings_callback = None
         self.button_help_callback = None
-        self.combobox_launch_mode_callback = None
         self.close_event_callback = None
 
         # 既存の接続を解除してから新しいコールバック関数を接続
@@ -243,8 +238,6 @@ class MainWindow(QMainWindow):
         self.button_help.clicked.disconnect()
         self.button_help.clicked.connect(self._on_button_help_clicked)
 
-        self.combobox_launch_mode.currentIndexChanged.disconnect()
-        self.combobox_launch_mode.currentIndexChanged.connect(self._on_combobox_launch_mode_changed)
 
     # コールバック関数登録用のメソッド
     def set_radio_normal_callback(self, callback):
@@ -273,9 +266,6 @@ class MainWindow(QMainWindow):
 
     def set_button_help_callback(self, callback):
         self.button_help_callback = callback
-
-    def set_combobox_launch_mode_callback(self, callback):
-        self.combobox_launch_mode_callback = callback
 
     def set_close_event_callback(self, callback):
         self.close_event_callback = callback
@@ -316,10 +306,6 @@ class MainWindow(QMainWindow):
     def _on_button_help_clicked(self):
         if self.button_help_callback:
             self.button_help_callback()
-
-    def _on_combobox_launch_mode_changed(self, index):
-        if self.combobox_launch_mode_callback:
-            self.combobox_launch_mode_callback(index)
 
     def closeEvent(self, event):
         if self.close_event_callback:

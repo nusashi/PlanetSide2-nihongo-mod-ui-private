@@ -44,7 +44,6 @@ class UIManager(QObject):
         self.main_window.set_button_check_update_callback(self.on_check_update_clicked)
         self.main_window.set_button_settings_callback(self.on_settings_clicked)
         self.main_window.set_button_help_callback(self.on_help_clicked)
-        self.main_window.set_combobox_launch_mode_callback(self.on_launch_mode_changed)
         self.main_window.set_close_event_callback(self.on_main_window_close_event)
         # SettingsPopupのコールバック設定
         self.settings_popup.set_button_local_path_callback(self.on_local_path_browse_clicked)
@@ -105,10 +104,6 @@ class UIManager(QObject):
 
     def on_help_clicked(self):
         self.help_popup.show()
-
-    def on_launch_mode_changed(self, index):
-        # コンボボックスが変更されたときの処理 (必要に応じて)
-        pass
 
     def on_local_path_browse_clicked(self):
         # TODO: MainManagerのset_local_pathを呼び出して、local_path_changedシグナルを発行
