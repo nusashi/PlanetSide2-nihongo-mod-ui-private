@@ -4,28 +4,17 @@
 
 ### 起動モード
 
-*   **テスト対象:** `radio_normal`, `radio_steam`, `combobox_launch_mode`
+*   **テスト対象:** `radio_normal`, `radio_steam`
 *   **テスト内容:**
     1.  ラジオボタンの初期状態を確認する。
         *   **テスト内容詳細:** (ここに具体的なテスト内容を追記)
         *   **テスト結果:** (ここにテスト結果を追記)
-    2.  ラジオボタンを切り替えたときに、`combobox_launch_mode`の選択肢が適切に変化するか確認する。
-        *   **テスト内容詳細:** (ここに具体的なテスト内容を追記)
-        *   **テスト結果:** (ここにテスト結果を追記)
-    3.  `combobox_launch_mode`で選択した起動モードが、`config.json`の`launch_mode`に正しく保存されるか確認する。
-        *   **テスト内容詳細:** (ここに具体的なテスト内容を追記)
-        *   **テスト結果:** (ここにテスト結果を追記)
-    4.  アプリケーション起動時に、`config.json`の`launch_mode`の値が`combobox_launch_mode`とラジオボタンに正しく反映されるか確認する。
-        *   **テスト内容詳細:** (ここに具体的なテスト内容を追記)
-        *   **テスト結果:** (ここにテスト結果を追記)
 *   **期待される結果:**
     1.  アプリケーション起動時に、`config.json`に保存されている`launch_mode`に対応するラジオボタンが選択されている。
-    2.  ラジオボタンを切り替えると、`combobox_launch_mode`の選択肢も連動して変化する。
-    3.  `combobox_launch_mode`で選択した値が、`config.json`の`launch_mode`に保存される。
-    4.  次回起動時に、保存された`launch_mode`の値がUIに反映される。
+    2.  次回起動時に、保存された`launch_mode`の値がUIに反映される。
 *   **関連ファイルとメソッド:**
-    *   `project_root/src/ui/main_window.py`: `init_ui`, `setup_layout`, `_on_radio_normal_clicked`, `_on_radio_steam_clicked`, `_on_combobox_launch_mode_changed`
-    *   `project_root/src/ui/ui_manager.py`: `on_radio_normal_clicked`, `on_radio_steam_clicked`, `on_launch_mode_changed`, `update_launch_mode_ui`
+    *   `project_root/src/ui/main_window.py`: `init_ui`, `setup_layout`, `_on_radio_normal_clicked`, `_on_radio_steam_clicked`
+    *   `project_root/src/ui/ui_manager.py`: `on_radio_normal_clicked`, `on_radio_steam_clicked`, `update_launch_mode_ui`
     *   `project_root/src/system/main_manager.py`: `launch_mode` (プロパティ)
     *   `project_root/src/system/config_manager.py`: `get_config`, `set_config`, `save_config`
 
@@ -145,25 +134,6 @@
     *   `project_root/src/ui/main_window.py`: `_on_button_help_clicked`
     *   `project_root/src/ui/ui_manager.py`: `on_help_clicked`
     *   `project_root/src/ui/help_popup.py`
-
-### ローカルパス
-
-*   **テスト対象:** `label_local_path`
-*   **テスト内容:**
-    1.  アプリケーション起動時に、`config.json`に保存されているローカルパスがラベルに表示されるか確認する。
-        *   **テスト内容詳細:** (ここに具体的なテスト内容を追記)
-        *   **テスト結果:** (ここにテスト結果を追記)
-    2.  設定ポップアップでローカルパスを変更したときに、ラベルの表示が更新されるか確認する。
-        *   **テスト内容詳細:** (ここに具体的なテスト内容を追記)
-        *   **テスト結果:** (ここにテスト結果を追記)
-*   **期待される結果:**
-    1.  `config.json`に保存されているローカルパスがラベルに表示される。
-    2.  設定ポップアップでローカルパスを変更すると、ラベルの表示も更新される。
-*   **関連ファイルとメソッド:**
-    *   `project_root/src/ui/main_window.py`: `init_ui`, `setup_layout`, `update_local_path_label`
-    *   `project_root/src/ui/ui_manager.py`: `local_path_changed`
-    *   `project_root/src/system/main_manager.py`: `local_path`
-    *   `project_root/src/system/config_manager.py`: `get_config`, `set_config`, `save_config`
 
 ## SettingsPopup
 
