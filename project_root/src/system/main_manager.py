@@ -115,7 +115,7 @@ class MainManager:
             return f"無効なアップデートサーバー", current_version
         latest_tag = self._github_resource_manager.get_latest_tag(repo_info["owner"], repo_info["repo"])
         if not latest_tag:
-            return f"最新のタグを取得できませんでした", current_version
+            return f"最新タグの取得に失敗", current_version
         try:
             if version.parse(latest_tag) > version.parse(current_version):
                 setattr(self, next_version_attr, latest_tag)
@@ -123,42 +123,49 @@ class MainManager:
             else:
                 return None, current_version  # (エラーなし, 現在のバージョン)
         except version.InvalidVersion:
-            return f"無効なバージョンタグが見つかりました: {latest_tag}", current_version
+            return f"無効なバージョンタグ: {latest_tag}", current_version
 
     def check_update(self):
         app_version_status = ""
         translation_version_status = ""
         # Appのアップデート確認
         if not self.check_app_update_server_connection():
-            print("Appアップデートサーバーに接続できません")
-            app_error, self._next_app_version = "Appアップデートサーバーに接続できません", self.app_version
+            print("アップデートサーバーに接続できません")
+            app_error, self._next_app_version = "アップデートサーバーに接続できません", self.app_version
         else:
             app_error, self._next_app_version = self._check_version_update(self.app_update_server_url, self.app_version, "next_app_version")
 
         # 翻訳のアップデート確認
         if not self.check_translation_update_server_connection():
-            print("翻訳アップデートサーバーに接続できません")
-            translation_error, self._next_translation_version = "翻訳アップデートサーバーに接続できません", self.translation_version
+            print("アップデートサーバーに接続できません")
+            translation_error, self._next_translation_version = "アップデートサーバーに接続できません", self.translation_version
         else:
             translation_error, self._next_translation_version = self._check_version_update(self.translation_update_server_url, self.translation_version, "next_translation_version")
 
         # 結果の表示 (UI 更新など)
         if app_error:
             print(app_error)
-            app_version_status = app_error
+            app_version_status = f"App:{app_error}"
         else:
             print("次のAppバージョン:", self._next_app_version)
 
         if translation_error:
             print(translation_error)
-            translation_version_status = translation_error
+            translation_version_status = f"翻訳:{translation_error}"
         else:
             print("次の翻訳バージョン:", self._next_translation_version)
 
-        if app_error is None and version.parse(self._next_app_version) > version.parse(self.app_version):
-            app_version_status = f"新しいAppバージョンが利用可能です: {self._next_app_version}"
-        if translation_error is None and version.parse(self._next_translation_version) > version.parse(self.translation_version):
-            translation_version_status = f"新しい翻訳バージョンが利用可能です: {self._next_translation_version}"
+        if app_error is None:
+            if version.parse(self._next_app_version) > version.parse(self.app_version):
+                app_version_status = f"新しいAppバージョンが利用可能です: {self._next_app_version}"
+            else:
+                app_version_status = "Appバージョンは最新です"
+
+        if translation_error is None:
+            if version.parse(self._next_translation_version) > version.parse(self.translation_version):
+                translation_version_status = f"新しい翻訳バージョンが利用可能です: {self._next_translation_version}"
+            else:
+                app_version_status = "翻訳バージョンは最新です"
 
         self.status_string = app_version_status + "\n" + translation_version_status
 
