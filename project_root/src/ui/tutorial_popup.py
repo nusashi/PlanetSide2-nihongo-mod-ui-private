@@ -72,7 +72,4 @@ class TutorialPopup(QWidget):
         self.ui_manager.local_path_changed.emit(text)
 
     def closeEvent(self, event):
-        # 閉じるボタンが押されたら、initial_setup_completed を True にする
-        self.ui_manager.main_manager._config_manager.set_config("initial_setup_completed", True)
-        self.ui_manager.main_manager._config_manager.save_config()
         event.accept()
