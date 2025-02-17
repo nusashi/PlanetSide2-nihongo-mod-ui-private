@@ -97,15 +97,15 @@ class SettingsPopup(QWidget):
             self.button_local_path_callback()
 
     def _on_lineedit_local_path_text_edited(self, text):
-        self.ui_manager.main_manager.local_path = text
+        self.ui_manager.set_property("local_path", text)
         self.ui_manager.local_path_changed.emit(text)
 
     def _on_lineedit_app_server_url_text_edited(self, text):
-        self.ui_manager.main_manager.app_update_server_url = text
+        self.ui_manager.set_property("app_update_server_url", text)
         self.ui_manager.app_update_server_url_changed.emit(text)
 
     def _on_lineedit_translation_server_url_text_edited(self, text):
-        self.ui_manager.main_manager.translation_update_server_url = text
+        self.ui_manager.set_property("translation_update_server_url", text)
         self.ui_manager.translation_update_server_url_changed.emit(text)
 
     # 各ラベルとラインエディットのテキストを更新するメソッド
