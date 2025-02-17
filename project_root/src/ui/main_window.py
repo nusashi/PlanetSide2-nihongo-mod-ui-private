@@ -1,3 +1,5 @@
+import sys
+import os
 from PySide6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -42,8 +44,8 @@ class MainWindow(QMainWindow):
 
     def set_icons(self):
         print("MainWindow.set_icons called")
-        # Use standard icons
-        self.app_icon = self.style().standardIcon(QStyle.SP_VistaShield)
+        icon_path = os.path.join(os.environ["DATA_DIR"], "icon.ico")
+        self.app_icon = QIcon(icon_path)
         if not self.app_icon.isNull():
             self.setWindowIcon(self.app_icon)
             print("MainWindow.setWindowIcon called")
