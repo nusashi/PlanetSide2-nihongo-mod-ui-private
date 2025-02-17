@@ -6,6 +6,7 @@ from PySide6.QtCore import QObject, Signal
 from ui.main_window import MainWindow
 from ui.settings_popup import SettingsPopup
 from ui.help_popup import HelpPopup
+from ui.tutorial_popup import TutorialPopup
 from const import const
 
 
@@ -29,6 +30,7 @@ class UIManager(QObject):
         self.main_window = MainWindow(self)
         self.settings_popup = SettingsPopup(self)
         self.help_popup = HelpPopup()
+        self.tutorial_popup = TutorialPopup(self)
         self.setup_connections()
 
     # 新しいプロパティセッターの追加
@@ -95,6 +97,9 @@ class UIManager(QObject):
         self.translation_version_label_changed.connect(self.main_window.update_translation_version_label)
         self.show_update_app_button_changed.connect(self.main_window.button_update_app.setVisible)
         self.show_update_translation_button_changed.connect(self.main_window.button_update_translation.setVisible)
+
+    def show_tutorial_popup(self):
+        self.tutorial_popup.show()
 
     # MainWindowの表示
     def show_main_window(self):

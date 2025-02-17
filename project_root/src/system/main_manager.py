@@ -95,16 +95,16 @@ class MainManager:
         self.ui_manager.set_on_radio_steam_clicked_callback(on_launch_mode_changed)
 
         # 初回起動対応
-        if self._config_manager.get_initial_config():
-            # 初回起動時、チュートリアルポップアップを表示
-            # 使い方の説明とローカルパスの設定ポップアップ
-            pass
+        is_tutorial = self._config_manager.get_initial_config()
         self._next_app_version = self.app_version
         self._next_translation_version = self.translation_version
         # アップデート確認
         self.check_update()
 
         self.ui_manager.show_main_window()
+        if is_tutorial:
+            # 初回起動時、チュートリアルポップアップを表示
+            self.ui_manager.show_tutorial_popup()
         self.ui_manager.run()
 
     def _check_version_update(self, server_url: str, current_version: str, next_version_attr: str) -> Tuple[Optional[str], Optional[str]]:
