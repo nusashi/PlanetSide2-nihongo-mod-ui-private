@@ -18,9 +18,25 @@
 *   メインウィンドウのレイアウト調整
     *   ステータス表示エリア拡大
     *   バージョン情報表示エリア縮小
-
+*   ヘルプポップアップの修正
+    *   スクロールバー追加
+    *   テキストを最新の内容に更新
+*   初回起動時の対応
+    *   `ui_manager.py`に`show_tutorial_popup`メソッド追加
+    *   `tutorial_popup.py`作成
+        *   簡易説明
+        *   ローカルパス設定UI
+        *   閉じるボタン
+    *   `main_manager.py`の`initialize`メソッドを修正
+        *   初回起動判定
+        *   `show_tutorial_popup`呼び出し
+        *   初回起動フラグ更新
 ## 次のステップ
 
+* ポップアップの最大化禁止
+    *   `SettingsPopup`、`TutorialPopup`、`HelpPopup` の修正
+        *   `setFixedSize` でサイズ固定
+        *   `setWindowFlags` で最大化ボタン無効化
 *   UIの調整 (必要に応じて)
 *   各種機能の実装とテスト (ゲーム起動、日本語化、アップデート確認、設定変更など)
 *   UIテスト
