@@ -131,14 +131,14 @@ class MainManager:
         # Appのアップデート確認
         if not self.check_app_update_server_connection():
             print("Appアップデートサーバーに接続できません")
-            app_error, self._next_app_version = "Appアップデートサーバーに接続できません", None
+            app_error, self._next_app_version = "Appアップデートサーバーに接続できません", self.app_version
         else:
             app_error, self._next_app_version = self._check_version_update(self.app_update_server_url, self.app_version, "next_app_version")
 
         # 翻訳のアップデート確認
         if not self.check_translation_update_server_connection():
             print("翻訳アップデートサーバーに接続できません")
-            translation_error, self._next_translation_version = "翻訳アップデートサーバーに接続できません", None
+            translation_error, self._next_translation_version = "翻訳アップデートサーバーに接続できません", self.translation_version
         else:
             translation_error, self._next_translation_version = self._check_version_update(self.translation_update_server_url, self.translation_version, "next_translation_version")
 
