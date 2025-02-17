@@ -15,6 +15,8 @@
 *   `UIManager` は、`MainWindow` からのイベントを受け取り、`MainManager` のメソッドを呼び出す。
 *   `MainManager` は、処理の結果を `UIManager` のカスタムシグナルとして発行する。
 *   `UIManager` は、シグナルを受信して `MainWindow` のUI要素を更新する。
+*   `SettingsPopup`の`QLineEdit`の`textEdited`シグナルが、`UIManager`のカスタムシグナルを発行する。
+*   `UIManager`のカスタムシグナルが、`MainManager`のプロパティを更新する。
 
 ## システムアーキテクチャ
 

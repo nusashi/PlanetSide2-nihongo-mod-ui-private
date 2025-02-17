@@ -7,6 +7,10 @@
 *   `MainManager` と `UIManager` の連携 (カスタムシグナルによるイベント駆動)
 *   GitHub リポジトリへの疎通確認 (`GitHubResourceManager`)
 *   最新リリースのタグ名取得 (`GitHubResourceManager`)
+*   設定ポップアップのローカルパス入力欄に、起動時にconfigのデータが出力される
+*   `settings_popup.py`の`textEdited`シグナルを使って、ローカルパスなどの変更が`MainManager`に通知される
+*   `main_window.py`の`HelpPopup`と`SettingsPopup`関連の処理が削除され、`UIManager`経由で呼び出される
+*   誤って削除した`main_window.py`のコールバック設定が復元された
 
 ## 構築するもの
 
@@ -47,6 +51,9 @@
 *   `UIManager` と `MainWindow` 間のカスタムシグナル導入: 完了
 *   `preview_gui.py` の削除: 完了
 *   `MainWindow.py` へのUI実装: 完了
+*   設定ポップアップのローカルパス問題修正: 完了
+*   `main_window.py`の不要な処理削除: 完了
+*   コールバック設定の復元: 完了
 
 ## 既知の問題
 

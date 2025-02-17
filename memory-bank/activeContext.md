@@ -8,6 +8,10 @@
 *   `preview_gui.py` を削除し、`MainWindow.py` に直接UIを実装
 *   Memory Bank の更新
 *   メインウィンドウからローカルパスのラベルを削除
+*   設定ポップアップのローカルパス入力欄に、起動時にconfigのデータが出力されない問題を修正
+*   `settings_popup.py`の`textEdited`シグナルを使って、ローカルパスなどの変更を`MainManager`に通知するように修正
+*   `main_window.py`の`HelpPopup`と`SettingsPopup`関連の処理を削除し、`UIManager`経由で呼び出すように修正
+*   誤って削除した`main_window.py`のコールバック設定を復元
 
 ## 次のステップ
 
