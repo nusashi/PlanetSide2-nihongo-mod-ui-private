@@ -12,8 +12,9 @@ from PySide6.QtCore import Qt
 
 
 class SettingsPopup(QWidget):
-    def __init__(self):
+    def __init__(self, ui_manager):
         super().__init__()
+        self.ui_manager = ui_manager
         self.setWindowTitle("設定")
         # UI要素を初期化
         self.init_ui()
@@ -83,12 +84,29 @@ class SettingsPopup(QWidget):
         # 新しいコールバック関数を接続
         self.button_local_path.clicked.connect(self._on_button_local_path_clicked)
 
+        # textEditedシグナルに接続
+        self.lineedit_local_path.textEdited.connect(self._on_lineedit_local_path_text_edited)
+        self.lineedit_app_server_url.textEdited.connect(self._on_lineedit_app_server_url_text_edited)
+        self.lineedit_translation_server_url.textEdited.connect(self._on_lineedit_translation_server_url_text_edited)
+
     def set_button_local_path_callback(self, callback):
         self.button_local_path_callback = callback
 
     def _on_button_local_path_clicked(self):
         if self.button_local_path_callback:
             self.button_local_path_callback()
+
+    def _on_lineedit_local_path_text_edited(self, text):
+        self.ui_manager.main_manager.local_path = text
+        self.ui_manager.local_path_changed.emit(text)
+
+    def _on_lineedit_app_server_url_text_edited(self, text):
+        self.ui_manager.main_manager.app_update_server_url = text
+        self.ui_manager.app_update_server_url_changed.emit(text)
+
+    def _on_lineedit_translation_server_url_text_edited(self, text):
+        self.ui_manager.main_manager.translation_update_server_url = text
+        self.ui_manager.translation_update_server_url_changed.emit(text)
 
     # 各ラベルとラインエディットのテキストを更新するメソッド
     def update_label_local_path_text(self, text):
