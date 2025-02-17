@@ -107,7 +107,7 @@ class MainWindow(QMainWindow):
         self.textedit_status.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         font_metrics = self.textedit_status.fontMetrics()
         line_height = font_metrics.lineSpacing()
-        self.textedit_status.setFixedHeight(line_height * 3)
+        self.textedit_status.setFixedHeight(line_height * 4.5)
         print("MainWindow.textedit_status initialized")
 
         # 設定ボタン
@@ -153,7 +153,7 @@ class MainWindow(QMainWindow):
         grid_version.addWidget(self.label_translation_version, 1, 0)
         grid_version.addWidget(self.button_update_translation, 1, 1)
         grid_version.addWidget(self.button_check_update, 2, 0, 2, 2)  # Span two columns
-        grid_version.setRowStretch(2, 1)
+        grid_version.setRowStretch(2, 0)
         # ローカルパス (ラベル)
         groupbox_version.setLayout(grid_version)
         print("MainWindow.groupbox_version setup done")
