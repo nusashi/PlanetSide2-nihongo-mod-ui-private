@@ -64,6 +64,9 @@ class MainManager:
             return f"無効なバージョンタグが見つかりました: {latest_tag}", None
 
     def check_update(self):
+        app_string = ""
+        translation_string = ""
+
         # Appのアップデート確認
         if not self.check_app_update_server_connection():
             print("Appアップデートサーバーに接続できません")
@@ -80,14 +83,23 @@ class MainManager:
 
         # 結果の表示 (UI 更新など)
         if app_error:
-            print(app_error)  # TODO ステータスラベルの更新?
+            print(app_error)
+            app_string = app_error
         else:
             print("次のAppバージョン:", self._next_app_version)
 
         if translation_error:
-            print(translation_error)  # TODO ステータスラベルの更新?
+            print(translation_error)
+            translation_string = translation_error
         else:
             print("次の翻訳バージョン:", self._next_translation_version)
+
+        if app_error is None and self._next_app_version != self.app_version:
+            app_string = f"新しいAppバージョンが利用可能です: {self._next_app_version}"
+        if translation_error is None and self._next_translation_version != self.translation_version:
+            translation_string = f"新しい翻訳バージョンが利用可能です: {self._next_translation_version}"
+
+        self.status_string = f"{app_string}\n{translation_string}"
 
     # ゲーム起動
     def try_game_launch(self) -> bool:
@@ -95,16 +107,20 @@ class MainManager:
         if self.launch_mode == const.NORMAL_LAUNCH:
             if os.path.exists(self.local_path + "/LaunchPad.exe"):
                 subprocess.Popen(self.local_path + "/LaunchPad.exe")
+                self.status_string = "ゲームを起動しました。"
                 return True
             else:
                 error_message = "LaunchPad.exe が見つかりません。"
                 print(error_message)
+                self.status_string = error_message
                 return False
         elif self.launch_mode == const.STEAM_LAUNCH:
             os.startfile(const.STEAM_GAME_URI)
+            self.status_string = "ゲームを起動しました。"
             return True
         else:
             print("不正な起動モードです")
+            self.status_string = "不正な起動モードです"
             return False
 
     # 日本語化
@@ -113,43 +129,51 @@ class MainManager:
         # data フォルダが存在しない場合はエラー
         if not os.path.isdir(self._data_dir):
             print(f"{self._data_dir} フォルダが存在しません")
+            self.status_string = f"{self._data_dir} フォルダが存在しません"
             return False
 
         jp_data_dat_path = os.path.join(self._data_dir, const.JP_DAT_FINE_NAME)
         if not os.path.exists(jp_data_dat_path):
             print(f"{const.JP_DAT_FINE_NAME} が存在しません")
+            self.status_string = f"{const.JP_DAT_FINE_NAME} が存在しません"
             return False
 
         jp_data_dir_path = os.path.join(self._data_dir, const.JP_DIR_FILE_NAME)
         if not os.path.exists(jp_data_dir_path):
             print(f"{const.JP_DIR_FILE_NAME} が存在しません")
+            self.status_string = f"{const.JP_DIR_FILE_NAME} が存在しません"
             return False
 
         font_path = os.path.join(self._data_dir, const.FONT_FILE_NAME)
         if not os.path.exists(font_path):
             print(f"{const.FONT_FILE_NAME} が存在しません")
+            self.status_string = f"{const.FONT_FILE_NAME} が存在しません"
             return False
 
         locale_path = os.path.join(self.local_path, "Locale")
         # Locale フォルダが存在しない場合はエラー
         if not os.path.isdir(locale_path):
             print(f"{locale_path} フォルダが存在しません")
+            self.status_string = f"{locale_path} フォルダが存在しません"
             return False
 
         destination_dat_path = os.path.join(locale_path, const.EN_DAT_FINE_NAME)
         if not os.path.exists(destination_dat_path):
             print(f"{const.EN_DAT_FINE_NAME} が存在しません")
+            self.status_string = f"{const.EN_DAT_FINE_NAME} が存在しません"
             return False
 
         destination_dir_path = os.path.join(locale_path, const.EN_DIR_FILE_NAME)
         if not os.path.exists(destination_dir_path):
             print(f"{const.EN_DIR_FILE_NAME} が存在しません")
+            self.status_string = f"{const.EN_DIR_FILE_NAME} が存在しません"
             return False
 
         ui_resource_fonts_path = os.path.join(self.local_path, "UI", "Resource", "Fonts")
         # Fonts フォルダが存在しない場合はエラー
         if not os.path.isdir(ui_resource_fonts_path):
             print(f"{ui_resource_fonts_path} フォルダが存在しません")
+            self.status_string = f"{ui_resource_fonts_path} フォルダが存在しません"
             return False
 
         # TODO RemoteConfigなどで、対応が出来るようにしたい
@@ -166,6 +190,7 @@ class MainManager:
                 existing_font_paths.append(destination_font_path)  # 存在したらリストに追加
             else:
                 print(f"{font_name} が存在しません")
+                self.status_string = f"{font_name} が存在しません"
                 return False
 
         try:
@@ -174,9 +199,11 @@ class MainManager:
             for destination_font_path in existing_font_paths:
                 shutil.copy2(font_path, destination_font_path)
             print("翻訳終了")
+            self.status_string = "翻訳ファイルを配置しました。"
             return True
         except Exception as e:
             print(f"翻訳失敗 {str(e)}")
+            self.status_string = f"翻訳ファイルの配置に失敗しました。: {e}"
             return False
 
     # AppUpdateServer疎通確認関数
@@ -214,6 +241,7 @@ class MainManager:
         repo_info = self._github_resource_manager._parse_github_url(self.app_update_server_url)
         if not repo_info:
             print("無効なAppアップデートサーバーURL")
+            self.status_string = "無効なAppアップデートサーバーURL"
             return None
         owner = repo_info["owner"]
         repo = repo_info["repo"]
@@ -221,14 +249,17 @@ class MainManager:
 
         if not tag:
             print("Appアップデート用の最新タグを取得できませんでした")
+            self.status_string = "Appアップデート用の最新タグを取得できませんでした"
             return None
         # TODO: ファイル名を config などから取得するようにする
         filename = "PlanetSide2-nihongo-mod-ui.exe"  # 仮のファイル名。実際には設定ファイルなどから取得
         try:
             file_path = self._github_resource_manager.download_asset(owner, repo, tag, filename, destination_dir, progress_callback)
+            self.status_string = "Appのダウンロードが完了しました。"
             return file_path
         except Exception as e:
             print(f"Appファイルのダウンロードに失敗しました: {e}")
+            self.status_string = f"Appファイルのダウンロードに失敗しました: {e}"
             return None
 
     # 翻訳ファイルのダウンロード関数
@@ -244,6 +275,7 @@ class MainManager:
         repo_info = self._github_resource_manager._parse_github_url(self.translation_update_server_url)
         if not repo_info:
             print("無効な翻訳アップデートサーバーURL")
+            self.status_string = "無効な翻訳アップデートサーバーURL"
             return None
         owner = repo_info["owner"]
         repo = repo_info["repo"]
@@ -251,6 +283,7 @@ class MainManager:
 
         if not tag:
             print("翻訳アップデート用の最新タグを取得できませんでした")
+            self.status_string = "翻訳アップデート用の最新タグを取得できませんでした"
             return None
         # ダウンロードするファイル名のリスト
         filenames = [
@@ -268,7 +301,9 @@ class MainManager:
                 downloaded_files.append(file_path)
             except (requests.exceptions.RequestException, FileNotFoundError) as e:
                 print(f"{filename} のダウンロードに失敗しました: {e}")
+                self.status_string = f"{filename} のダウンロードに失敗しました: {e}"
                 return None  # 一つでも失敗したら None を返す
+        self.status_string = "翻訳ファイルのダウンロードが完了しました。"
         return downloaded_files
 
     @property

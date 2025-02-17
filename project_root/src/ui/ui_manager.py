@@ -73,26 +73,18 @@ class UIManager(QObject):
         self.launch_mode_changed.emit(self.main_manager.launch_mode)
 
     def on_game_launch_clicked(self):
-        if self.main_manager.try_game_launch():
-            self.status_text_changed.emit("ゲームを起動しました。")
-        else:
-            self.status_text_changed.emit("ゲームの起動に失敗しました。")
+        self.main_manager.try_game_launch()
 
     def on_replace_translation_clicked(self):
-        if self.main_manager.try_translation():
-            self.status_text_changed.emit("翻訳ファイルを配置しました。")
-        else:
-            self.status_text_changed.emit("翻訳ファイルの配置に失敗しました。")
+        self.main_manager.try_translation()
 
     def on_update_app_clicked(self):
         # TODO: ダウンロード処理、進捗表示
         self.main_manager.download_app_file("temp")  # 仮のディレクトリ
-        self.status_text_changed.emit("Appのアップデートは未実装")
 
     def on_update_translation_clicked(self):
         # TODO: ダウンロード処理、進捗表示
         self.main_manager.download_translation_file()  # dataディレクトリ
-        self.status_text_changed.emit("翻訳のアップデートは未実装")
 
     def on_check_update_clicked(self):
         self.main_manager.check_update()
