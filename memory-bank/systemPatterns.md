@@ -18,6 +18,21 @@
 *   `SettingsPopup`の`QLineEdit`の`textEdited`シグナルが、`UIManager`のカスタムシグナルを発行する。
 *   `UIManager`のカスタムシグナルが、`MainManager`のプロパティを更新する。
 
+```mermaid
+sequenceDiagram
+    participant User
+    participant MainWindow
+    participant UIManager
+    participant MainManager
+
+    User->>MainWindow: 操作 (ボタンクリックなど)
+    MainWindow->>UIManager: メソッド呼び出し
+    UIManager->>MainManager: メソッド呼び出し
+    MainManager->>MainManager: ビジネスロジック実行
+    MainManager-->>UIManager: カスタムシグナル発行
+    UIManager-->>MainWindow: UI更新
+```
+
 ## システムアーキテクチャ
 
 1.  ユーザーが GUI を操作する。
