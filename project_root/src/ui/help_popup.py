@@ -31,3 +31,8 @@ class HelpPopup(QWidget):
         layout = QVBoxLayout()
         layout.addWidget(self.label_help)
         self.setLayout(layout)
+
+        # ウィンドウサイズを固定
+        self.setFixedSize(500, 300)
+        # 最大化ボタンを無効化
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowMaximizeButtonHint | Qt.WindowCloseButtonHint)

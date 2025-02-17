@@ -22,6 +22,11 @@ class SettingsPopup(QWidget):
         self.setup_layout()
         self.setup_callbacks()  # コールバック初期化
 
+        # ウィンドウサイズを固定
+        self.setFixedSize(400, 300)
+        # 最大化ボタンを無効化
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowMaximizeButtonHint | Qt.WindowCloseButtonHint)
+
     def init_ui(self):
         # ゲームフォルダ位置指定
         self.label_local_path = QLabel("ローカルパス:")
