@@ -131,6 +131,9 @@ class UIManager(QObject):
             self._on_check_update_clicked_callback()
 
     def _on_settings_clicked(self):
+        self.settings_popup.update_lineedit_local_path_text(self.get_property("local_path"))
+        self.settings_popup.update_lineedit_app_server_url_text(self.get_property("app_update_server_url"))
+        self.settings_popup.update_lineedit_translation_server_url_text(self.get_property("translation_update_server_url"))
         self.settings_popup.show()
 
     def _on_help_clicked(self):
