@@ -112,10 +112,10 @@ class MainManager:
         """
         repo_info = self._github_resource_manager._parse_github_url(server_url)
         if not repo_info:
-            return f"無効なアップデートサーバーURL: {server_url}", None
+            return f"無効なアップデートサーバー", current_version
         latest_tag = self._github_resource_manager.get_latest_tag(repo_info["owner"], repo_info["repo"])
         if not latest_tag:
-            return f"最新のタグを取得できませんでした: {server_url}", None
+            return f"最新のタグを取得できませんでした", current_version
         try:
             if version.parse(latest_tag) > version.parse(current_version):
                 setattr(self, next_version_attr, latest_tag)
@@ -123,7 +123,7 @@ class MainManager:
             else:
                 return None, current_version  # (エラーなし, 現在のバージョン)
         except version.InvalidVersion:
-            return f"無効なバージョンタグが見つかりました: {latest_tag}", None
+            return f"無効なバージョンタグが見つかりました: {latest_tag}", current_version
 
     def check_update(self):
         app_version_status = ""
