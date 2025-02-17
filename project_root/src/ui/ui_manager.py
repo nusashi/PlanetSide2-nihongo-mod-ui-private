@@ -1,4 +1,6 @@
 import sys
+from packaging import version  # バージョン比較に使用
+from typing import Callable
 from PySide6.QtWidgets import QApplication, QFileDialog
 from PySide6.QtCore import QObject, Signal
 from ui.main_window import MainWindow
@@ -8,6 +10,8 @@ from const import const
 
 
 class UIManager(QObject):
+    # プロパティのコールバックを初期化
+    _property_callbacks = {}
     # カスタムシグナル
     local_path_changed = Signal(str)
     app_update_server_url_changed = Signal(str)
@@ -19,34 +23,69 @@ class UIManager(QObject):
     show_update_app_button_changed = Signal(bool)
     show_update_translation_button_changed = Signal(bool)
 
-    def __init__(self, main_manager):
+    def __init__(self):
         super().__init__()
         self.app = QApplication(sys.argv)  # QApplicationインスタンスをここで作成
-        self.main_manager = main_manager
         self.main_window = MainWindow(self)
         self.settings_popup = SettingsPopup(self)
         self.help_popup = HelpPopup()
         self.setup_connections()
         self.show_main_window()
 
-    # setup_connections, show_main_window, 各種イベントハンドラ, redraw, update_launch_mode_ui は変更なし(略)
+    # 新しいプロパティセッターの追加
+    def set_property_callbacks(self, property_name: str, getter: Callable[[], any], setter: Callable[[any], None]):
+        self._property_callbacks[property_name] = {"getter": getter, "setter": setter}
+
+    def get_property(self, property_name: str) -> any:
+        if property_name not in self._property_callbacks:
+            raise ValueError(f"プロパティ '{property_name}'には取得関数(getter)が設定されていません。")
+        return self._property_callbacks[property_name]["getter"]()
+
+    def set_property(self, property_name: str, value: any):
+        if property_name not in self._property_callbacks:
+            raise ValueError(f"プロパティ '{property_name}'には設定関数(setter)が設定されていません。")
+        self._property_callbacks[property_name]["setter"](value)
+
+    def set_on_radio_normal_clicked_callback(self, callback: Callable[[str], None]):
+        self._on_radio_normal_clicked_callback = callback
+
+    def set_on_radio_steam_clicked_callback(self, callback: Callable[[str], None]):
+        self._on_radio_steam_clicked_callback = callback
+
+    def set_on_game_launch_clicked_callback(self, callback: Callable[[], None]):
+        self._on_game_launch_clicked_callback = callback
+
+    def set_on_replace_translation_clicked_callback(self, callback: Callable[[], None]):
+        self._on_replace_translation_clicked_callback = callback
+
+    def set_on_update_app_clicked_callback(self, callback: Callable[[], None]):
+        self._on_update_app_clicked_callback = callback
+
+    def set_on_update_translation_clicked_callback(self, callback: Callable[[], None]):
+        self._on_update_translation_clicked_callback = callback
+
+    def set_on_check_update_clicked_callback(self, callback: Callable[[], None]):
+        self._on_check_update_clicked_callback = callback
+
     def run(self):
         sys.exit(self.app.exec())
 
     def setup_connections(self):
         # MainWindowのコールバック設定
-        self.main_window.set_radio_normal_callback(self.on_radio_normal_clicked)
-        self.main_window.set_radio_steam_callback(self.on_radio_steam_clicked)
-        self.main_window.set_button_game_launch_callback(self.on_game_launch_clicked)
-        self.main_window.set_button_replace_translation_callback(self.on_replace_translation_clicked)
-        self.main_window.set_button_update_app_callback(self.on_update_app_clicked)
-        self.main_window.set_button_update_translation_callback(self.on_update_translation_clicked)
-        self.main_window.set_button_check_update_callback(self.on_check_update_clicked)
-        self.main_window.set_button_settings_callback(self.on_settings_clicked)
-        self.main_window.set_button_help_callback(self.on_help_clicked)
-        self.main_window.set_close_event_callback(self.on_main_window_close_event)
+        self.main_window.set_radio_normal_callback(self._on_radio_normal_clicked)
+        self.main_window.set_radio_steam_callback(self._on_radio_steam_clicked)
+        self.main_window.set_button_game_launch_callback(self._on_game_launch_clicked)
+        self.main_window.set_button_replace_translation_callback(self._on_replace_translation_clicked)
+        self.main_window.set_button_update_app_callback(self._on_update_app_clicked)
+        self.main_window.set_button_update_translation_callback(self._on_update_translation_clicked)
+        self.main_window.set_button_check_update_callback(self._on_check_update_clicked)
+        self.main_window.set_button_settings_callback(self._on_settings_clicked)
+        self.main_window.set_button_help_callback(self._on_help_clicked)
+        self.main_window.set_close_event_callback(self._on_main_window_close_event)
+
         # SettingsPopupのコールバック設定
-        self.settings_popup.set_button_local_path_callback(self.on_local_path_browse_clicked)
+        self.settings_popup.set_button_local_path_callback(self._on_local_path_browse_clicked)
+
         # シグナルとスロットの接続
         self.local_path_changed.connect(self.settings_popup.update_lineedit_local_path_text)
         self.app_update_server_url_changed.connect(self.settings_popup.update_lineedit_app_server_url_text)
@@ -63,76 +102,77 @@ class UIManager(QObject):
         self.redraw()  # 初期描画
         self.main_window.show()
 
-    # 各種イベントハンドラ (MainManagerの同名メソッドを呼び出す)
-    def on_radio_normal_clicked(self):
-        self.main_manager.launch_mode = const.NORMAL_LAUNCH
-        self.launch_mode_changed.emit(self.main_manager.launch_mode)
+    # 各種イベントハンドラ
+    def _on_radio_normal_clicked(self):
+        if self._on_radio_normal_clicked_callback:
+            self._on_radio_normal_clicked_callback(const.NORMAL_LAUNCH)
 
-    def on_radio_steam_clicked(self):
-        self.main_manager.launch_mode = const.STEAM_LAUNCH
-        self.launch_mode_changed.emit(self.main_manager.launch_mode)
+    def _on_radio_steam_clicked(self):
+        if self._on_radio_steam_clicked_callback:
+            self._on_radio_steam_clicked_callback(const.STEAM_LAUNCH)
 
-    def on_game_launch_clicked(self):
-        self.main_manager.try_game_launch()
+    def _on_game_launch_clicked(self):
+        if self._on_game_launch_clicked_callback:
+            self._on_game_launch_clicked_callback()
 
-    def on_replace_translation_clicked(self):
-        self.main_manager.try_translation()
+    def _on_replace_translation_clicked(self):
+        if self._on_replace_translation_clicked_callback:
+            self._on_replace_translation_clicked_callback()
 
-    def on_update_app_clicked(self):
-        # TODO: ダウンロード処理、進捗表示
-        self.main_manager.download_app_file("temp")  # 仮のディレクトリ
+    def _on_update_app_clicked(self):
+        if self._on_update_app_clicked_callback:
+            self._on_update_app_clicked_callback()
 
-    def on_update_translation_clicked(self):
-        # TODO: ダウンロード処理、進捗表示
-        self.main_manager.download_translation_file()  # dataディレクトリ
+    def _on_update_translation_clicked(self):
+        if self._on_update_translation_clicked_callback:
+            self._on_update_translation_clicked_callback()
 
-    def on_check_update_clicked(self):
-        self.main_manager.check_update()
-        self.redraw()
+    def _on_check_update_clicked(self):
+        if self._on_check_update_clicked_callback:
+            self._on_check_update_clicked_callback()
 
-    def on_settings_clicked(self):
+    def _on_settings_clicked(self):
         self.settings_popup.show()
 
-    def on_help_clicked(self):
+    def _on_help_clicked(self):
         self.help_popup.show()
 
-    def on_local_path_browse_clicked(self):
-        # TODO: MainManagerのset_local_pathを呼び出して、local_path_changedシグナルを発行
+    def _on_local_path_browse_clicked(self):
         file_dialog = QFileDialog()
         selected_path = file_dialog.getExistingDirectory(self.settings_popup, "Select Directory")
         if selected_path:
-            self.main_manager.local_path = selected_path
+            self.set_property("local_path", selected_path)
             self.local_path_changed.emit(selected_path)
 
-    def on_main_window_close_event(self, event):
+    def _on_main_window_close_event(self, event):
         # TODO: 必要なら確認ダイアログを出すなど
         event.accept()
         QApplication.quit()
 
     # UIの再描画
     def redraw(self):
-        # MainManagerから最新の情報を取得してUIを更新
-        self.local_path_changed.emit(self.main_manager.local_path)
-        self.app_update_server_url_changed.emit(self.main_manager.app_update_server_url)
-        self.translation_update_server_url_changed.emit(self.main_manager.translation_update_server_url)
-        self.launch_mode_changed.emit(self.main_manager.launch_mode)
-        self.status_text_changed.emit(self.main_manager.status_string)
-        self.app_version_label_changed.emit(f"アプリバージョン: {self.main_manager.app_version}")
-        self.translation_version_label_changed.emit(f"翻訳バージョン: {self.main_manager.translation_version}")
-
-        # アップデートボタンの表示/非表示
-        if self.main_manager.next_app_version != self.main_manager.app_version:
-            self.show_update_app_button_changed.emit(True)
-        else:
-            self.show_update_app_button_changed.emit(False)
-
-        if self.main_manager.next_translation_version != self.main_manager.translation_version:
-            self.show_update_translation_button_changed.emit(True)
-        else:
-            self.show_update_translation_button_changed.emit(False)
+        launch_mode = self.get_property("launch_mode")
+        status_string = self.get_property("status_string")
+        app_version = self.get_property("app_version")
+        next_app_version = self.get_property("next_app_version")
+        translation_version = self.get_property("translation_version")
+        next_translation_version = self.get_property("next_translation_version")
+        is_updatable_app = version.parse(next_app_version) > version.parse(app_version)
+        is_updatable_translation = version.parse(next_translation_version) > version.parse(translation_version)
 
         # 起動モードのUI更新
-        self.update_launch_mode_ui(self.main_manager.launch_mode)
+        self.update_launch_mode_ui(launch_mode)
+
+        # ステータスラベルの更新
+        self.status_text_changed.emit(status_string)
+
+        # バージョン表示の更新
+        self.app_version_label_changed.emit(f"アプリバージョン: {app_version}")
+        self.translation_version_label_changed.emit(f"翻訳バージョン: {translation_version}")
+
+        # アップデートボタンの表示/非表示
+        self.show_update_app_button_changed.emit(is_updatable_app)
+        self.show_update_translation_button_changed.emit(is_updatable_translation)
 
     def update_launch_mode_ui(self, launch_mode):
         if launch_mode == const.NORMAL_LAUNCH:
