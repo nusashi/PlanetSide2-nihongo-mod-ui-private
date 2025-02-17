@@ -20,8 +20,6 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QIcon, QFontMetrics
-from ui.settings_popup import SettingsPopup
-from ui.help_popup import HelpPopup
 
 
 class MainWindow(QMainWindow):
@@ -39,11 +37,6 @@ class MainWindow(QMainWindow):
         print("MainWindow.setup_layout called")
         self.setFixedSize(270, 350)
         print("MainWindow.setFixedSize called")
-        # 設定ポップアップのインスタンス
-        self.settings_popup = SettingsPopup()
-        print("MainWindow.settings_popup initialized")
-        self.help_popup = HelpPopup()
-        print("MainWindow.help_popup initialized")
 
         self.setup_callbacks()  # コールバック設定
 
@@ -230,11 +223,10 @@ class MainWindow(QMainWindow):
         self.button_check_update.clicked.connect(self._on_button_check_update_clicked)
 
         self.button_settings.clicked.disconnect()
-        self.button_settings.clicked.connect(self._on_button_settings_clicked)
+        self.button_settings.clicked.connect(self.ui_manager.on_settings_clicked)
 
         self.button_help.clicked.disconnect()
-        self.button_help.clicked.connect(self._on_button_help_clicked)
-
+        self.button_help.clicked.connect(self.ui_manager.on_help_clicked)
 
     # コールバック関数登録用のメソッド
     def set_radio_normal_callback(self, callback):
