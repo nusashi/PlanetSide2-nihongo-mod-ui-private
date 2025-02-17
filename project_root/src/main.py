@@ -3,7 +3,6 @@ import os
 from pathlib import Path
 
 from system.main_manager import MainManager
-from ui.ui_manager import UIManager
 
 
 def setup_module_path():
@@ -45,5 +44,4 @@ if __name__ == "__main__":
     initialize_base_directory()
 
     main_manager = MainManager(os.environ["DATA_DIR"])
-    ui_manager = UIManager(main_manager)
-    ui_manager.run()
+    main_manager.initialize()

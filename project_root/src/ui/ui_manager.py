@@ -30,7 +30,6 @@ class UIManager(QObject):
         self.settings_popup = SettingsPopup(self)
         self.help_popup = HelpPopup()
         self.setup_connections()
-        self.show_main_window()
 
     # 新しいプロパティセッターの追加
     def set_property_callbacks(self, property_name: str, getter: Callable[[], any], setter: Callable[[any], None]):

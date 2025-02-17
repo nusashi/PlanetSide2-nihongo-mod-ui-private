@@ -223,10 +223,10 @@ class MainWindow(QMainWindow):
         self.button_check_update.clicked.connect(self._on_button_check_update_clicked)
 
         self.button_settings.clicked.disconnect()
-        self.button_settings.clicked.connect(self.ui_manager.on_settings_clicked)
+        self.button_settings.clicked.connect(self._on_button_settings_clicked)
 
         self.button_help.clicked.disconnect()
-        self.button_help.clicked.connect(self.ui_manager.on_help_clicked)
+        self.button_help.clicked.connect(self._on_button_help_clicked)
 
     # コールバック関数登録用のメソッド
     def set_radio_normal_callback(self, callback):

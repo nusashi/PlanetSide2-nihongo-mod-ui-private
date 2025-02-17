@@ -8,6 +8,7 @@ from packaging import version  # バージョン比較に使用
 from const import const
 from system.config_manager import JsonConfigManager
 from system.github_resource_manager import GitHubResourceManager
+from ui.ui_manager import UIManager
 
 
 class MainManager:
@@ -22,10 +23,68 @@ class MainManager:
         self._status_string = ""  # ステータス
         self._config_manager = JsonConfigManager(data_dir)
         self._github_resource_manager = GitHubResourceManager()
-        self.initialize()
+        self.ui_manager = UIManager()
 
     def initialize(self):
         print("初期化")
+
+        # UIマネージャにプロパティのコールバックを登録
+        properties_to_register = [
+            "status_string",
+            "app_version",
+            "next_app_version",
+            "translation_version",
+            "next_translation_version",
+            "launch_mode",
+            "local_path",
+            "app_update_server_url",
+            "translation_update_server_url",
+        ]
+        for prop_name in properties_to_register:
+            self.ui_manager.set_property_callbacks(
+                prop_name,
+                lambda prop_name=prop_name: getattr(self, prop_name),  # getter
+                lambda value, prop_name=prop_name: setattr(self, prop_name, value),  # setter
+            )
+
+        # ローカル関数としてコールバック関数を定義し、UIマネージャにコールバック関数を登録
+        def on_game_launch_clicked():
+            self.try_game_launch()
+            self.ui_manager.redraw()
+
+        self.ui_manager.set_on_game_launch_clicked_callback(on_game_launch_clicked)
+
+        def on_replace_translation_clicked():
+            self.try_translation()
+            self.ui_manager.redraw()
+
+        self.ui_manager.set_on_replace_translation_clicked_callback(on_replace_translation_clicked)
+
+        def on_update_app_clicked():
+            self.download_app_file(self._data_dir, self.progress_callback)
+            self.ui_manager.redraw()
+
+        self.ui_manager.set_on_update_app_clicked_callback(on_update_app_clicked)
+
+        def on_update_translation_clicked():
+            self.download_translation_file(self.progress_callback)
+            self.ui_manager.redraw()
+
+        self.ui_manager.set_on_update_translation_clicked_callback(on_update_translation_clicked)
+
+        def on_check_update_clicked():
+            self.check_update()
+            self.ui_manager.redraw()
+
+        self.ui_manager.set_on_check_update_clicked_callback(on_check_update_clicked)
+
+        def on_launch_mode_changed(launch_mode: str):
+            self.launch_mode = launch_mode
+            self.ui_manager.redraw()
+
+        self.ui_manager.set_on_radio_normal_clicked_callback(on_launch_mode_changed)
+        self.ui_manager.set_on_radio_steam_clicked_callback(on_launch_mode_changed)
+
         # 初回起動対応
         if self._config_manager.get_initial_config():
             # 初回起動時、チュートリアルポップアップを表示
@@ -35,6 +94,9 @@ class MainManager:
         self._next_translation_version = self.translation_version
         # アップデート確認
         self.check_update()
+
+        self.ui_manager.show_main_window()
+        self.ui_manager.run()
 
     def _check_version_update(self, server_url: str, current_version: str, next_version_attr: str) -> Tuple[Optional[str], Optional[str]]:
         """
@@ -64,9 +126,8 @@ class MainManager:
             return f"無効なバージョンタグが見つかりました: {latest_tag}", None
 
     def check_update(self):
-        app_string = ""
-        translation_string = ""
-
+        app_version_status = ""
+        translation_version_status = ""
         # Appのアップデート確認
         if not self.check_app_update_server_connection():
             print("Appアップデートサーバーに接続できません")
@@ -84,22 +145,22 @@ class MainManager:
         # 結果の表示 (UI 更新など)
         if app_error:
             print(app_error)
-            app_string = app_error
+            app_version_status = app_error
         else:
             print("次のAppバージョン:", self._next_app_version)
 
         if translation_error:
             print(translation_error)
-            translation_string = translation_error
+            translation_version_status = translation_error
         else:
             print("次の翻訳バージョン:", self._next_translation_version)
 
-        if app_error is None and self._next_app_version != self.app_version:
-            app_string = f"新しいAppバージョンが利用可能です: {self._next_app_version}"
-        if translation_error is None and self._next_translation_version != self.translation_version:
-            translation_string = f"新しい翻訳バージョンが利用可能です: {self._next_translation_version}"
+        if app_error is None and version.parse(self._next_app_version) > version.parse(self.app_version):
+            app_version_status = f"新しいAppバージョンが利用可能です: {self._next_app_version}"
+        if translation_error is None and version.parse(self._next_translation_version) > version.parse(self.translation_version):
+            translation_version_status = f"新しい翻訳バージョンが利用可能です: {self._next_translation_version}"
 
-        self.status_string = f"{app_string}\n{translation_string}"
+        self.status_string = app_version_status + "\n" + translation_version_status
 
     # ゲーム起動
     def try_game_launch(self) -> bool:
@@ -107,7 +168,7 @@ class MainManager:
         if self.launch_mode == const.NORMAL_LAUNCH:
             if os.path.exists(self.local_path + "/LaunchPad.exe"):
                 subprocess.Popen(self.local_path + "/LaunchPad.exe")
-                self.status_string = "ゲームを起動しました。"
+                self.status_string = "ゲームランチャーを起動しました。\n緑のゲージが完全に満タンになったら\n日本語化を押してください。"
                 return True
             else:
                 error_message = "LaunchPad.exe が見つかりません。"
@@ -116,7 +177,7 @@ class MainManager:
                 return False
         elif self.launch_mode == const.STEAM_LAUNCH:
             os.startfile(const.STEAM_GAME_URI)
-            self.status_string = "ゲームを起動しました。"
+            self.status_string = "ゲームランチャーを起動しました。\n緑のゲージが完全に満タンになったら\n日本語化を押してください。"
             return True
         else:
             print("不正な起動モードです")
@@ -199,11 +260,11 @@ class MainManager:
             for destination_font_path in existing_font_paths:
                 shutil.copy2(font_path, destination_font_path)
             print("翻訳終了")
-            self.status_string = "翻訳ファイルを配置しました。"
+            self.status_string = "日本語化が完了しました。"
             return True
         except Exception as e:
             print(f"翻訳失敗 {str(e)}")
-            self.status_string = f"翻訳ファイルの配置に失敗しました。: {e}"
+            self.status_string = f"日本語化に失敗しました。: {e}"
             return False
 
     # AppUpdateServer疎通確認関数
@@ -227,6 +288,11 @@ class MainManager:
             print("無効な翻訳アップデートサーバーURL")
             return False
         return self._github_resource_manager.check_connection(repo_info["owner"], repo_info["repo"])
+
+    # プログレスコールバック関数を定義
+    def progress_callback(self, filename: str, file_number: int, total_files: int, downloaded_bytes: int):
+        self.status_string = f"{filename} ({file_number}/{total_files})\n{downloaded_bytes} バイト ダウンロード完了"
+        self.ui_manager.redraw()
 
     # 最新のAppダウンロード
     def download_app_file(self, destination_dir: str, progress_callback: Optional[Callable[[str, int, int, int], None]] = None) -> Optional[str]:
