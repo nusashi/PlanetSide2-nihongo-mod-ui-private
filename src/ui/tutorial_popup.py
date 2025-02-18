@@ -20,7 +20,7 @@ class TutorialPopup(QWidget):
 
         # チュートリアルメッセージ
         tutorial_text = """
-        PlanetSide 2 日本語化ツールへようこそ！
+        PlanetSide 2 日本語化Mod へようこそ！
 
         このツールを使うと、簡単に PlanetSide 2 を日本語化できます。
 
