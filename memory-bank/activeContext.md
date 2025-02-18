@@ -31,12 +31,10 @@
         *   初回起動判定
         *   `show_tutorial_popup`呼び出し
         *   初回起動フラグ更新
+*   `main_window.py`の`set_icons`メソッドを修正し、`icon.ico`を読み込むように変更
+
 ## 次のステップ
 
-* ポップアップの最大化禁止
-    *   `SettingsPopup`、`TutorialPopup`、`HelpPopup` の修正
-        *   `setFixedSize` でサイズ固定
-        *   `setWindowFlags` で最大化ボタン無効化
 *   UIの調整 (必要に応じて)
 *   各種機能の実装とテスト (ゲーム起動、日本語化、アップデート確認、設定変更など)
 *   UIテスト

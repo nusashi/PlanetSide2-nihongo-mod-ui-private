@@ -11,6 +11,7 @@
 *   `settings_popup.py`の`textEdited`シグナルを使って、ローカルパスなどの変更が`MainManager`に通知される
 *   `main_window.py`の`HelpPopup`と`SettingsPopup`関連の処理が削除され、`UIManager`経由で呼び出される
 *   誤って削除した`main_window.py`のコールバック設定が復元された
+*   `main_window.py`の`set_icons`メソッドで`icon.ico`を読み込む
 
 ## 構築するもの
 
@@ -60,6 +61,7 @@
 *   ヘルプポップアップの修正
     *   スクロールバー追加
     *   テキストを最新の内容に更新
+*   ポップアップの最大化禁止: 完了
 
 ## 既知の問題
 
