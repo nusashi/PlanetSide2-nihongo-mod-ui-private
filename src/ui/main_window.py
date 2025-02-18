@@ -22,14 +22,14 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QIcon, QFontMetrics
-
+from const import const
 
 class MainWindow(QMainWindow):
     def __init__(self, ui_manager):
         super().__init__()
         self.ui_manager = ui_manager
         print("MainWindow initialized")
-        self.setWindowTitle("PS2 日本語化")
+        self.setWindowTitle(const.WINDOW_TITLE)
         print("MainWindow.setWindowTitle called")
         self.set_icons()
         print("MainWindow.set_icons called")
