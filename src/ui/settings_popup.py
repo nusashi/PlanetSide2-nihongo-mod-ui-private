@@ -40,9 +40,9 @@ class SettingsPopup(QWidget):
         self.lineedit_translation_server_url = QLineEdit()
 
         # 作者クレジット
-        self.label_author = QLabel("Authors: A, B, C")  # Replace with actual author names
-        # ライセンス表示 (仮)
-        self.label_license = QLabel("License: MIT License")  # Replace with actual license
+        self.label_author = QLabel("Created By nusashi(Frontend), seigo2016(Backend), mossy(Translator)")
+        # ライセンス表示
+        self.label_license = QLabel("License: MIT License Copyright © 2025 PlanetSide2 日本語化MOD 開発チーム")
 
     def setup_layout(self):
         # ゲームフォルダ位置指定

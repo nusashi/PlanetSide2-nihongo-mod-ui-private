@@ -11,6 +11,8 @@
 
 ## 使い方
 
+フォルダの中の「PS2JPMod.exe」を起動してください。
+
 1.  **PlanetSide 2 のインストールフォルダを設定します。**
     *   初めてツールを使うときは、PlanetSide 2 がインストールされているフォルダを指定する必要があります。
     *   設定は「設定」ボタンから変更できます。
@@ -44,3 +46,10 @@
 ## 問い合わせ先
 
 *   不具合報告や質問は、[ぬさし](https://x.com/nusashi) までお願いします。
+
+## クレジット
+
+Created By nusashi(Frontend), seigo2016(Backend), mossy(Translator)
+
+License: MIT License
+Copyright © 2025 PlanetSide2 日本語化MOD 開発チーム
