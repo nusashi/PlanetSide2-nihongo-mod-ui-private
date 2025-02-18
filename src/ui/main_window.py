@@ -44,8 +44,14 @@ class MainWindow(QMainWindow):
 
     def set_icons(self):
         print("MainWindow.set_icons called")
-        icon_path = os.path.join(os.environ["DATA_DIR"], "icon.ico")
-        self.app_icon = QIcon(icon_path)
+
+        try:
+            # コンパイルされた場合
+            self.app_icon = QIcon("resources/icon.ico")
+        except FileNotFoundError:
+            # 通常実行
+            self.app_icon = QIcon("src/resources/icon.ico")
+
         if not self.app_icon.isNull():
             self.setWindowIcon(self.app_icon)
             print("MainWindow.setWindowIcon called")
