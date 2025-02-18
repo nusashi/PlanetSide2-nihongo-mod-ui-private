@@ -184,7 +184,7 @@ class MainManager:
         if self.launch_mode == const.NORMAL_LAUNCH:
             if os.path.exists(self.local_path + "/LaunchPad.exe"):
                 subprocess.Popen(self.local_path + "/LaunchPad.exe")
-                self.status_string = "ゲームランチャーを起動しました。\n緑のゲージが完全に満タンになったら\n日本語化を押してください。"
+                self.status_string = "ゲームランチャーを起動しました。\n緑のゲージが完全に満タンになったら\n「日本語化」を押してください。"
                 return True
             else:
                 error_message = "LaunchPad.exe が見つかりません。"
@@ -193,7 +193,7 @@ class MainManager:
                 return False
         elif self.launch_mode == const.STEAM_LAUNCH:
             os.startfile(const.STEAM_GAME_URI)
-            self.status_string = "ゲームランチャーを起動しました。\n緑のゲージが完全に満タンになったら\n日本語化を押してください。"
+            self.status_string = "ゲームランチャーを起動しました。\n緑のゲージが完全に満タンになったら\n「日本語化」を押してください。"
             return True
         else:
             print("不正な起動モードです")
@@ -276,7 +276,7 @@ class MainManager:
             for destination_font_path in existing_font_paths:
                 shutil.copy2(font_path, destination_font_path)
             print("翻訳終了")
-            self.status_string = "日本語化が完了しました。"
+            self.status_string = "日本語化が完了しました。\n「PLAY」ボタンを押してゲームを実行してください"
             return True
         except Exception as e:
             print(f"翻訳失敗 {str(e)}")
