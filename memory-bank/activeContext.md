@@ -1,41 +1,5 @@
 # Active Context
 
-## 最近の変更
-
-*   プロジェクトのディレクトリ構造を大幅に変更 (`project_root` を導入)
-*   `Logic` モジュールを廃止し、`MainManager` にビジネスロジックを集約
-*   `MainManager` と `UIManager` の間の通信にカスタムシグナルを使用するように変更
-*   `preview_gui.py` を削除し、`MainWindow.py` に直接UIを実装
-*   Memory Bank の更新
-*   メインウィンドウからローカルパスのラベルを削除
-*   設定ポップアップのローカルパス入力欄に、起動時にconfigのデータが出力されない問題を修正
-*   `settings_popup.py`の`textEdited`シグナルを使って、ローカルパスなどの変更を`MainManager`に通知するように修正
-*   `main_window.py`の`HelpPopup`と`SettingsPopup`関連の処理を削除し、`UIManager`経由で呼び出すように修正
-*   誤って削除した`main_window.py`のコールバック設定を復元
-*   全コードの読み込み完了
-*   `main_manager.py`の`_check_version_update`の戻り値の型を修正
-*   `ui_manager.py`の`redraw`メソッド内の変数順を修正
-*   メインウィンドウのレイアウト調整
-    *   ステータス表示エリア拡大
-    *   バージョン情報表示エリア縮小
-*   ヘルプポップアップの修正
-    *   スクロールバー追加
-    *   テキストを最新の内容に更新
-*   初回起動時の対応
-    *   `ui_manager.py`に`show_tutorial_popup`メソッド追加
-    *   `tutorial_popup.py`作成
-        *   簡易説明
-        *   ローカルパス設定UI
-        *   閉じるボタン
-    *   `main_manager.py`の`initialize`メソッドを修正
-        *   初回起動判定
-        *   `show_tutorial_popup`呼び出し
-        *   初回起動フラグ更新
-*   `main_window.py`の`set_icons`メソッドを修正し、`icon.ico`を読み込むように変更
-
 ## 次のステップ
 
-*   UIの調整 (必要に応じて)
-*   各種機能の実装とテスト (ゲーム起動、日本語化、アップデート確認、設定変更など)
-*   UIテスト
-*   アップデート機能の実装 (アプリと翻訳データ)
+*   progress.md の「今後の計画」を参照してください。

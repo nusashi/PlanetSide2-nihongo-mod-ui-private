@@ -24,6 +24,7 @@ sequenceDiagram
     participant MainWindow
     participant UIManager
     participant MainManager
+    participant SettingsPopup
 
     User->>MainWindow: 操作 (ボタンクリックなど)
     MainWindow->>UIManager: メソッド呼び出し
@@ -31,6 +32,10 @@ sequenceDiagram
     MainManager->>MainManager: ビジネスロジック実行
     MainManager-->>UIManager: カスタムシグナル発行
     UIManager-->>MainWindow: UI更新
+
+    User->>SettingsPopup: 設定変更
+    SettingsPopup->>UIManager: textEditedシグナル
+    UIManager-->>MainManager: プロパティ更新
 ```
 
 ## システムアーキテクチャ
@@ -86,8 +91,8 @@ classDiagram
         +check_update()
         +try_game_launch()
         +try_translation()
-        +download_app_file()
-        +download_translation_file()
+        +download_app_files()
+        +download_translation_files()
     }
     class ConfigManager {
     }
@@ -98,6 +103,7 @@ classDiagram
         +main_window: MainWindow
         +settings_popup: SettingsPopup
         +help_popup: HelpPopup
+        +tutorial_popup: TutorialPopup
         +run()
         +on_radio_normal_clicked()
         +on_radio_steam_clicked()
@@ -116,8 +122,6 @@ classDiagram
     }
     class MainWindow {
         +ui_manager: UIManager
-        +settings_popup: SettingsPopup
-        +help_popup: HelpPopup
         +set_icons()
         +init_ui()
         +setup_layout()
@@ -128,6 +132,8 @@ classDiagram
     }
     class HelpPopup{
     }
+    class TutorialPopup{
+    }
 
     MainManager --> ConfigManager
     MainManager --> GitHubResourceManager
@@ -135,6 +141,7 @@ classDiagram
     UIManager --> MainWindow
     UIManager --> SettingsPopup
     UIManager --> HelpPopup
+    UIManager --> TutorialPopup
 ```
 
 ## ファイル構成
@@ -157,4 +164,5 @@ project_root/
 │       ├── help_popup.py
 │       ├── main_window.py
 │       ├── settings_popup.py
+│       ├── tutorial_popup.py
 │       └── ui_manager.py

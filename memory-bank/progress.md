@@ -2,66 +2,45 @@
 
 ## 動作するもの
 
-*   設定ファイル (JSON形式) の読み書き (`ConfigManager`)
-*   基本的なGUI (`MainWindow`, `SettingsPopup`, `HelpPopup`)
-*   `MainManager` と `UIManager` の連携 (カスタムシグナルによるイベント駆動)
-*   GitHub リポジトリへの疎通確認 (`GitHubResourceManager`)
-*   最新リリースのタグ名取得 (`GitHubResourceManager`)
-*   設定ポップアップのローカルパス入力欄に、起動時にconfigのデータが出力される
-*   `settings_popup.py`の`textEdited`シグナルを使って、ローカルパスなどの変更が`MainManager`に通知される
-*   `main_window.py`の`HelpPopup`と`SettingsPopup`関連の処理が削除され、`UIManager`経由で呼び出される
-*   誤って削除した`main_window.py`のコールバック設定が復元された
-*   `main_window.py`の`set_icons`メソッドで`icon.ico`を読み込む
+*   設定ファイル (JSON形式) の読み書き (`ConfigManager`): 確認済み
+*   基本的なGUI (`MainWindow`, `SettingsPopup`, `HelpPopup`, `TutorialPopup`): 確認済み
+*   `MainManager` と `UIManager` の連携 (カスタムシグナルによるイベント駆動): 確認済み
+*   GitHub リポジトリへの疎通確認 (`GitHubResourceManager`): 確認済み
+*   最新リリースのタグ名取得 (`GitHubResourceManager`): 確認済み
+*   設定ポップアップのローカルパス入力欄に、起動時にconfigのデータが出力される: 確認済み
+*   `settings_popup.py`の`textEdited`シグナルを使って、ローカルパスなどの変更が`MainManager`に通知される: 確認済み
+*   `main_window.py`の`HelpPopup`と`SettingsPopup`関連の処理が削除され、`UIManager`経由で呼び出される: 確認済み
+*   誤って削除した`main_window.py`のコールバック設定が復元された: 確認済み
+*   `main_window.py`の`set_icons`メソッドで`icon.ico`を読み込む: 確認済み
+*   Nuitkaによるコンパイル手順の確立: 確認済み
+*   初回起動時のチュートリアルポップアップ (`TutorialPopup`): 確認済み
+*   ゲーム起動 (通常版/Steam版): 実装済み (`MainManager.try_game_launch`)
+*   ファイル置換 (日本語化): 実装済み (`MainManager.try_translation`)
+*   アップデート機能 (アプリと翻訳データ)
+    *   GitHub Releases からのダウンロード: 実装済み (`GitHubResourceManager.download_latest_assets`, `MainManager.download_app_files`, `MainManager.download_translation_files`)
 
 ## 構築するもの
 
-*   ゲーム起動 (通常版/Steam版)
-*   ファイル置換 (日本語化)
 *   アップデート機能 (アプリと翻訳データ)
-    *   GitHub Releases からのダウンロード
-    *   ダウンロードしたファイルの適用
-*   UIの改善
-    *   ステータス表示
-    *   エラーメッセージ表示
-    *   プログレスバー表示 (アップデート時)
-*   各種機能のテスト
-*   初回起動時のチュートリアルポップアップ
-*   必要なファイルやフォルダが無い場合の対応
-    *   dataフォルダが無い場合：新規作成
-    *   ja_jp_data.datが無い場合：疎通確認後に初回ダウンロード
-    *   ja_jp_data.dirが無い場合：疎通確認後に初回ダウンロード
-    *   MyFont.ttfが無い場合：疎通確認後に初回ダウンロード
-    *   updater.exeが無い場合：疎通確認後に初回ダウンロード (TODO: まだupdate.exeは作成すらしてないので)
+    *   ダウンロードしたファイルの適用: 未実装 (TODO: `download_app_files`でダウンロードしたファイルを適用する処理が必要)
+*   各種機能のテスト: 未実施 (TODO)
+*   必要なファイルやフォルダが無い場合の対応:
+    *   ja_jp_data.datが無い場合：疎通確認後に初回ダウンロード (TODO: `MainManager.try_translation`で、ファイルが存在しない場合にダウンロードする処理が必要)
+    *   ja_jp_data.dirが無い場合：疎通確認後に初回ダウンロード (TODO: `MainManager.try_translation`で、ファイルが存在しない場合にダウンロードする処理が必要)
+    *   MyFont.ttfが無い場合：疎通確認後に初回ダウンロード (TODO: `MainManager.try_translation`で、ファイルが存在しない場合にダウンロードする処理が必要)
+    *   updater.exeが無い場合：疎通確認後に初回ダウンロード (TODO: まだ`update.exe`は作成すらしてないので)
 
 ## 要件
 
-*   サーバーダウン時: 適切なエラーメッセージを表示
-*   設定ファイル破損時: デフォルト設定で起動
-*   ファイル操作権限不足時: エラーメッセージを表示し、処理を中断しない
-*   ファイル不在時: 適切なエラーメッセージを表示
+*   サーバーダウン時: 適切なエラーメッセージを表示: 実装済み (`MainManager.check_update`でエラーメッセージを設定)
+*   設定ファイル破損時: デフォルト設定で起動: 実装済み (`ConfigManager`でデフォルト設定を使用)
+*   ファイル操作権限不足時: エラーメッセージを表示し、処理を中断しない: 未実装 (TODO: ファイル操作時に例外処理を追加)
+*   ファイル不在時: 適切なエラーメッセージを表示: 実装済み (各メソッド内でファイル/フォルダの存在チェックとエラー処理を実施)
 
 ## 現在のステータス
 
-*   Memory Bank の更新: 完了
-*   プロジェクト構成の変更: 完了
-*   `Logic` モジュールの廃止: 完了
-*   `MainManager` へのビジネスロジック集約: 完了
-*   `UIManager` と `MainWindow` 間のカスタムシグナル導入: 完了
-*   `preview_gui.py` の削除: 完了
-*   `MainWindow.py` へのUI実装: 完了
-*   設定ポップアップのローカルパス問題修正: 完了
-*   `main_window.py`の不要な処理削除: 完了
-*   コールバック設定の復元: 完了
-*   全コードの読み込み完了
-*   `main_manager.py`の`_check_version_update`の戻り値の型を修正
-*   `ui_manager.py`の`redraw`メソッド内の変数順を修正
-*   メインウィンドウのレイアウト調整
-    *   ステータス表示エリア拡大
-    *   バージョン情報表示エリア縮小
-*   ヘルプポップアップの修正
-    *   スクロールバー追加
-    *   テキストを最新の内容に更新
-*   ポップアップの最大化禁止: 完了
+*   Memory Bank の更新: 実施中
+*   全コードの読み込み: 完了
 
 ## 既知の問題
 
@@ -73,3 +52,6 @@
 2.  各種機能の実装とテスト (ゲーム起動、日本語化、アップデート確認、設定変更など)
 3.  UIテスト
 4.  アップデート機能の実装 (アプリと翻訳データ)
+5.  ダウンロードしたファイルの適用
+6.  ファイル操作権限不足時の例外処理
+7.  翻訳ファイルやフォントファイルが無い場合の初回ダウンロード処理
