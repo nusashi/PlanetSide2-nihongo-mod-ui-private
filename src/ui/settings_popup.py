@@ -42,7 +42,7 @@ class SettingsPopup(QWidget):
         # 作者クレジット
         self.label_author = QLabel("Created By nusashi(Frontend), seigo2016(Backend), mossy(Translator)")
         # ライセンス表示
-        self.label_license = QLabel("License: MIT License Copyright © 2025 PlanetSide2 日本語化MOD 開発チーム")
+        self.label_license = QLabel("MIT License : Copyright © 2025 PlanetSide2 日本語化MOD 開発チーム")
 
     def setup_layout(self):
         # ゲームフォルダ位置指定
