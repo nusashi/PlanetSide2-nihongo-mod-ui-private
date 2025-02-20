@@ -19,7 +19,7 @@
     *   ターミナルで以下のコマンドを実行してください。
 
         ```
-        python -m nuitka --standalone --windows-console-mode=disable --enable-plugin=pyside6 --windows-icon-from-ico=src/resources/icon.ico --include-data-files=src/resources/icon.ico=resources/icon.ico --include-data-dir=src/data=data --output-filename=PS2JPMod --clean-cache=all --remove-output src/main.py
+        python -m nuitka --onefile --standalone --windows-console-mode=disable --enable-plugin=pyside6 --windows-icon-from-ico=src/resources/icon.ico --include-data-files=src/resources/icon.ico=resources/icon.ico --output-filename=PS2JPMod --clean-cache=all --remove-output src/main.py
         ```
 
         ```
