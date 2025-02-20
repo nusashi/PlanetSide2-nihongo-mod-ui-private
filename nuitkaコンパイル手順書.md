@@ -22,6 +22,10 @@
         python -m nuitka --standalone --windows-console-mode=disable --enable-plugin=pyside6 --windows-icon-from-ico=src/resources/icon.ico --include-data-files=src/resources/icon.ico=resources/icon.ico --include-data-dir=src/data=data --output-filename=PS2JPMod --clean-cache=all --remove-output src/main.py
         ```
 
+        ```
+        python -m nuitka --onefile --standalone --windows-console-mode=force --output-filename=testPath --clean-cache=all --remove-output testsrc/main.py
+        ```
+
         *   `--standalone`: 依存関係を全部含める
         *   `--onefile`: 一つのファイルにまとめる
         *   `--windows-console-mode=disable`: コンソールウィンドウを非表示にする

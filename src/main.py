@@ -20,6 +20,13 @@ def setup_module_path():
 
 def initialize_base_directory():
     """ベースディレクトリとdataディレクトリを初期化し、環境変数に設定する"""
+
+    # 5. sys.argv[0]
+    #   - 通常のPython環境: 実行コマンドに依存 (相対パスの場合もある)
+    #   - Nuitka (onefile以外): 実行ファイルの絶対パス (バージョン2.4以降)
+    #   - Nuitka (onefile): 実行ファイルの絶対パス (バージョン2.4以降) or 実行ファイル名
+    print(sys.argv[0])
+
     base_dir = Path(__file__).resolve().parent
     data_dir = base_dir / "data"  # srcディレクトリの親がプロジェクトルート
 
