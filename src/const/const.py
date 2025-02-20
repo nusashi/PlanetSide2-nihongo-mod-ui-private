@@ -35,3 +35,16 @@ STEAM_GAME_URI = "steam://rungameid/218230"
 # バージョンレイアウト
 UPDATE_BUTTON_TEXT = "更新"
 UPDATE_CONFIRM_BUTTON_TEXT = "アップデート確認"
+
+import os
+import sys
+
+if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        output_dir = sys.argv[1]  # 最初の引数を output フォルダのパスとする
+    else:
+        output_dir = "./output"  # 引数がない場合のデフォルト値
+
+    os.makedirs(output_dir, exist_ok=True)
+    with open(os.path.join(output_dir, "version.txt"), "w") as f:
+        f.write(DEFAULT_APP_VERSION)
