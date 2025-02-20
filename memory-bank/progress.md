@@ -18,6 +18,7 @@
 *   ファイル置換 (日本語化): 実装済み (`MainManager.try_translation`)
 *   アップデート機能 (アプリと翻訳データ)
     *   GitHub Releases からのダウンロード: 実装済み (`GitHubResourceManager.download_latest_assets`, `MainManager.download_app_files`, `MainManager.download_translation_files`)
+*   Nuitka でのコンパイルと証明書署名: 確認済み (`build.bat` で自動化)
 
 ## 構築するもの
 
@@ -52,6 +53,6 @@
 2.  各種機能の実装とテスト (ゲーム起動、日本語化、アップデート確認、設定変更など)
 3.  UIテスト
 4.  アップデート機能の実装 (アプリと翻訳データ)
-5.  ダウンロードしたファイルの適用
-6.  ファイル操作権限不足時の例外処理
-7.  翻訳ファイルやフォントファイルが無い場合の初回ダウンロード処理
+    *   ダウンロードしたファイルの適用
+5.  ファイル操作権限不足時の例外処理
+6.  翻訳ファイルやフォントファイルが無い場合の初回ダウンロード処理
