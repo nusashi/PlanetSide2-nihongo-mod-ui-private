@@ -408,6 +408,8 @@ class MainManager:
 
         if downloaded_files:
             self.status_string = "翻訳ファイルのダウンロードが完了しました。"
+            # バージョンを更新する
+            self.translation_version = self._next_translation_version
             return downloaded_files  # ダウンロードしたファイルのパスのリストを返す
         else:
             self.status_string = "翻訳ファイルのダウンロードに失敗しました"  # TODO より詳細なエラー
