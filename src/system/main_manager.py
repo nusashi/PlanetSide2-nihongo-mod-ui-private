@@ -310,7 +310,7 @@ class MainManager:
     # プログレスコールバック関数を定義
     def progress_callback(self, filename: str, file_number: int, total_files: int):
         self.status_string = f"{filename} ({file_number}/{total_files}) ダウンロード完了"
-        self.ui_manager.redraw()
+        self.ui_manager.update_status_text_ui(self.status_string)
 
     # 最新のAppダウンロード
     def download_app_files(self, destination_dir: str, filenames: List[str], progress_callback: Optional[Callable[[str, int, int], None]] = None) -> Optional[List[str]]:

@@ -187,3 +187,7 @@ class UIManager(QObject):
         elif launch_mode == const.STEAM_LAUNCH:
             self.main_window.radio_steam.setChecked(True)
         # 他のモードがあれば追加
+
+    def update_status_text_ui(self, status_text):
+        self.status_text_changed.emit(status_text)
+        QApplication.processEvents()
