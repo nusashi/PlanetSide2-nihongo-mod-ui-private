@@ -9,7 +9,6 @@ from const import const
 from system.config_manager import JsonConfigManager
 from system.github_resource_manager import GitHubResourceManager
 from system.github_release_scraper import GitHubReleaseScraper
-from system.file_integrity_checker import FileIntegrityChecker
 from ui.ui_manager import UIManager
 
 
@@ -26,7 +25,6 @@ class MainManager:
         self._config_manager = JsonConfigManager(data_dir)
         self._github_resource_manager = GitHubResourceManager()
         self.scraper = GitHubReleaseScraper()  # Web スクレイピング用
-        self.checker = FileIntegrityChecker()  # ハッシュ値検証用
         self.ui_manager = UIManager()
 
     def initialize(self):
@@ -123,7 +121,7 @@ class MainManager:
             エラーがない場合はエラーメッセージは None。
             アップデートがない場合は現在のバージョン、ある場合は最新のバージョンを返す。
         """
-        repo_info = self.scraper._parse_github_url(server_url)
+        repo_info = self.scraper.parse_github_url(server_url)
         if not repo_info:
             return f"無効なアップデートサーバー", current_version
         latest_tag = self.scraper.get_latest_tag(repo_info["owner"], repo_info["repo"])
@@ -292,7 +290,7 @@ class MainManager:
         """
         アプリケーションアップデートサーバーへの疎通確認を行う。
         """
-        repo_info = self.scraper._parse_github_url(self.app_update_server_url)
+        repo_info = self.scraper.parse_github_url(self.app_update_server_url)
         if not repo_info:
             print("無効なAppアップデートサーバーURL")
             return False
@@ -303,7 +301,7 @@ class MainManager:
         """
         翻訳アップデートサーバーへの疎通確認を行う。
         """
-        repo_info = self.scraper._parse_github_url(self.translation_update_server_url)
+        repo_info = self.scraper.parse_github_url(self.translation_update_server_url)
         if not repo_info:
             print("無効な翻訳アップデートサーバーURL")
             return False
@@ -328,7 +326,7 @@ class MainManager:
         Returns:
             ダウンロードしたファイルのパスのリスト。失敗した場合は None。
         """
-        repo_info = self.scraper._parse_github_url(self.app_update_server_url)
+        repo_info = self.scraper.parse_github_url(self.app_update_server_url)
         if not repo_info:
             print("無効なAppアップデートサーバーURL")
             self.status_string = "無効なAppアップデートサーバーURL"
@@ -345,18 +343,8 @@ class MainManager:
         downloaded_files = []
         for filename in filenames:
             try:
-                # ハッシュ値を取得
-                expected_sha256 = self.scraper.get_asset_sha256(owner, repo, filename)
-                if not expected_sha256:
-                    raise ValueError(f"Could not get SHA256 hash for {filename}")
-
                 # 個々のファイルのダウンロード
                 file_path = self._github_resource_manager.download_asset(owner, repo, tag, filename, destination_dir)
-
-                # ハッシュ値検証
-                if not self.checker.verify_file(file_path, expected_sha256):
-                    os.remove(file_path)  # 不正なファイルを削除
-                    raise ValueError(f"SHA256 mismatch for {filename}. Expected {expected_sha256}")
 
                 downloaded_files.append(file_path)
                 if progress_callback:
@@ -388,7 +376,7 @@ class MainManager:
         Returns:
             ダウンロードしたファイルのパスのリスト。失敗した場合は None。
         """
-        repo_info = self.scraper._parse_github_url(self.translation_update_server_url)
+        repo_info = self.scraper.parse_github_url(self.translation_update_server_url)
         if not repo_info:
             print("無効な翻訳アップデートサーバーURL")
             self.status_string = "無効な翻訳アップデートサーバーURL"
@@ -405,18 +393,8 @@ class MainManager:
         downloaded_files = []
         for filename in filenames:
             try:
-                # ハッシュ値を取得
-                expected_sha256 = self.scraper.get_asset_sha256(owner, repo, filename)
-                if not expected_sha256:
-                    raise ValueError(f"Could not get SHA256 hash for {filename}")
-
                 # 個々のファイルのダウンロード
                 file_path = self._github_resource_manager.download_asset(owner, repo, tag, filename, self._data_dir)
-
-                # ハッシュ値検証
-                if not self.checker.verify_file(file_path, expected_sha256):
-                    os.remove(file_path)  # 不正なファイルを削除
-                    raise ValueError(f"SHA256 mismatch for {filename}. Expected {expected_sha256}")
 
                 downloaded_files.append(file_path)
                 if progress_callback:
