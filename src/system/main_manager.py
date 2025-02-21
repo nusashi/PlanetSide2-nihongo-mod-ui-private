@@ -130,7 +130,7 @@ class MainManager:
         try:
             if version.parse(latest_tag) > version.parse(current_version):
                 setattr(self, next_version_attr, latest_tag)
-                return None, latest_tag  # (エラーなし, 最新バージョン)
+                return None, str(version.parse(latest_tag))  # (エラーなし, 最新バージョン)
             else:
                 return None, current_version  # (エラーなし, 現在のバージョン)
         except version.InvalidVersion:
