@@ -8,6 +8,8 @@ from packaging import version  # バージョン比較に使用
 from const import const
 from system.config_manager import JsonConfigManager
 from system.github_resource_manager import GitHubResourceManager
+from system.github_release_scraper import GitHubReleaseScraper
+from system.file_integrity_checker import FileIntegrityChecker
 from ui.ui_manager import UIManager
 
 
@@ -23,6 +25,8 @@ class MainManager:
         self._status_string = ""  # ステータス
         self._config_manager = JsonConfigManager(data_dir)
         self._github_resource_manager = GitHubResourceManager()
+        self.scraper = GitHubReleaseScraper()  # Web スクレイピング用
+        self.checker = FileIntegrityChecker()  # ハッシュ値検証用
         self.ui_manager = UIManager()
 
     def initialize(self):
@@ -76,7 +80,7 @@ class MainManager:
                 const.JP_DIR_FILE_NAME,
                 # const.FONT_FILE_NAME, # TODO どうしようかな...多分要らない
             ]
-            self.download_translation_files(self.progress_callback, filenames)
+            self.download_translation_files(filenames, self.progress_callback)
             self.ui_manager.redraw()
 
         self.ui_manager.set_on_update_translation_clicked_callback(on_update_translation_clicked)
@@ -119,10 +123,10 @@ class MainManager:
             エラーがない場合はエラーメッセージは None。
             アップデートがない場合は現在のバージョン、ある場合は最新のバージョンを返す。
         """
-        repo_info = self._github_resource_manager._parse_github_url(server_url)
+        repo_info = self.scraper._parse_github_url(server_url)
         if not repo_info:
             return f"無効なアップデートサーバー", current_version
-        latest_tag = self._github_resource_manager.get_latest_tag(repo_info["owner"], repo_info["repo"])
+        latest_tag = self.scraper.get_latest_tag(repo_info["owner"], repo_info["repo"])
         if not latest_tag:
             return f"最新タグの取得に失敗", current_version
         try:
@@ -288,7 +292,7 @@ class MainManager:
         """
         アプリケーションアップデートサーバーへの疎通確認を行う。
         """
-        repo_info = self._github_resource_manager._parse_github_url(self.app_update_server_url)
+        repo_info = self.scraper._parse_github_url(self.app_update_server_url)
         if not repo_info:
             print("無効なAppアップデートサーバーURL")
             return False
@@ -299,19 +303,19 @@ class MainManager:
         """
         翻訳アップデートサーバーへの疎通確認を行う。
         """
-        repo_info = self._github_resource_manager._parse_github_url(self.translation_update_server_url)
+        repo_info = self.scraper._parse_github_url(self.translation_update_server_url)
         if not repo_info:
             print("無効な翻訳アップデートサーバーURL")
             return False
         return self._github_resource_manager.check_connection(repo_info["owner"], repo_info["repo"])
 
     # プログレスコールバック関数を定義
-    def progress_callback(self, filename: str, file_number: int, total_files: int, downloaded_bytes: int):
-        self.status_string = f"{filename} ({file_number}/{total_files})\n{downloaded_bytes} バイト ダウンロード完了"
+    def progress_callback(self, filename: str, file_number: int, total_files: int):
+        self.status_string = f"{filename} ({file_number}/{total_files}) ダウンロード完了"
         self.ui_manager.redraw()
 
     # 最新のAppダウンロード
-    def download_app_files(self, destination_dir: str, filenames: List[str], progress_callback: Optional[Callable[[str, int, int, int], None]] = None) -> Optional[List[str]]:
+    def download_app_files(self, destination_dir: str, filenames: List[str], progress_callback: Optional[Callable[[str, int, int], None]] = None) -> Optional[List[str]]:
         """
         アプリケーションの最新版（複数ファイル）をダウンロードする。
 
@@ -319,12 +323,12 @@ class MainManager:
             destination_dir: 保存先のディレクトリ。
             filenames: ダウンロードするファイル名のリスト。
             progress_callback: 進捗コールバック関数。
-                引数: ファイル名, 現在のファイル番号, ファイル総数, ダウンロード済みバイト数
+                引数: ファイル名, 現在のファイル番号, ファイル総数
 
         Returns:
             ダウンロードしたファイルのパスのリスト。失敗した場合は None。
         """
-        repo_info = self._github_resource_manager._parse_github_url(self.app_update_server_url)
+        repo_info = self.scraper._parse_github_url(self.app_update_server_url)
         if not repo_info:
             print("無効なAppアップデートサーバーURL")
             self.status_string = "無効なAppアップデートサーバーURL"
@@ -332,45 +336,59 @@ class MainManager:
 
         owner = repo_info["owner"]
         repo = repo_info["repo"]
-
-        tag = self._github_resource_manager.get_latest_tag(owner, repo)
+        tag = self.scraper.get_latest_tag(owner, repo)
         if not tag:
             print("Appアップデート用の最新タグを取得できませんでした")
             self.status_string = "Appアップデート用の最新タグを取得できませんでした"
             return None
 
-        # download_latest_assets を呼び出すための情報を準備
-        repositories = [
-            {"url": self.app_update_server_url, "filenames": filenames},
-        ]
+        downloaded_files = []
+        for filename in filenames:
+            try:
+                # ハッシュ値を取得
+                expected_sha256 = self.scraper.get_asset_sha256(owner, repo, filename)
+                if not expected_sha256:
+                    raise ValueError(f"Could not get SHA256 hash for {filename}")
 
-        # download_latest_assets を呼び出す
-        results = self._github_resource_manager.download_latest_assets(repositories, destination_dir, progress_callback=progress_callback)
+                # 個々のファイルのダウンロード
+                file_path = self._github_resource_manager.download_asset(owner, repo, tag, filename, destination_dir)
 
-        # 結果をチェック
-        if results and self.app_update_server_url in results:
+                # ハッシュ値検証
+                if not self.checker.verify_file(file_path, expected_sha256):
+                    os.remove(file_path)  # 不正なファイルを削除
+                    raise ValueError(f"SHA256 mismatch for {filename}. Expected {expected_sha256}")
+
+                downloaded_files.append(file_path)
+                if progress_callback:
+                    # ファイル名, 現在のファイル番号(常に1), ファイル総数(filenamesの数)
+                    progress_callback(filename, len(downloaded_files), len(filenames))
+
+            except (requests.exceptions.RequestException, FileNotFoundError, ValueError) as e:
+                print(f"Download failed for {filename}: {e}")
+                self.status_string = f"{filename}のダウンロードに失敗しました: {e}"  # TODO より詳細なエラー
+                return None  # 失敗したら None を返す
+
+        if downloaded_files:
             self.status_string = "Appのダウンロードが完了しました。"
-            return results[self.app_update_server_url]  # ダウンロードしたファイルのパスのリストを返す
+            return downloaded_files  # ダウンロードしたファイルのパスのリストを返す
         else:
-            error_message = results.get(self.app_update_server_url, "Appのダウンロードに失敗しました")
-            print(error_message)
-            self.status_string = error_message
+            self.status_string = "Appのダウンロードに失敗しました"  # TODO より詳細なエラー
             return None
 
     # 翻訳ファイルのダウンロード関数
-    def download_translation_files(self, filenames: List[str], progress_callback: Optional[Callable[[str, int, int, int], None]] = None) -> Optional[List[str]]:
+    def download_translation_files(self, filenames: List[str], progress_callback: Optional[Callable[[str, int, int], None]] = None) -> Optional[List[str]]:
         """
         翻訳ファイルとフォントファイルの最新版をダウンロードする。
 
         Args:
             filenames: ダウンロードするファイル名のリスト。
             progress_callback: 進捗コールバック関数。
-                引数: ファイル名, 現在のファイル番号, ファイル総数, ダウンロード済みバイト数
+                引数: ファイル名, 現在のファイル番号, ファイル総数
 
         Returns:
             ダウンロードしたファイルのパスのリスト。失敗した場合は None。
         """
-        repo_info = self._github_resource_manager._parse_github_url(self.translation_update_server_url)
+        repo_info = self.scraper._parse_github_url(self.translation_update_server_url)
         if not repo_info:
             print("無効な翻訳アップデートサーバーURL")
             self.status_string = "無効な翻訳アップデートサーバーURL"
@@ -378,29 +396,43 @@ class MainManager:
 
         owner = repo_info["owner"]
         repo = repo_info["repo"]
-
-        tag = self._github_resource_manager.get_latest_tag(owner, repo)
+        tag = self.scraper.get_latest_tag(owner, repo)
         if not tag:
             print("翻訳アップデート用の最新タグを取得できませんでした")
             self.status_string = "翻訳アップデート用の最新タグを取得できませんでした"
             return None
 
-        # download_latest_assets を呼び出すための情報を準備
-        repositories = [
-            {"url": self.translation_update_server_url, "filenames": filenames},
-        ]
+        downloaded_files = []
+        for filename in filenames:
+            try:
+                # ハッシュ値を取得
+                expected_sha256 = self.scraper.get_asset_sha256(owner, repo, filename)
+                if not expected_sha256:
+                    raise ValueError(f"Could not get SHA256 hash for {filename}")
 
-        # download_latest_assets を呼び出す
-        results = self._github_resource_manager.download_latest_assets(repositories, self._data_dir, progress_callback=progress_callback)
+                # 個々のファイルのダウンロード
+                file_path = self._github_resource_manager.download_asset(owner, repo, tag, filename, self._data_dir)
 
-        # 結果をチェック
-        if results and self.translation_update_server_url in results:
+                # ハッシュ値検証
+                if not self.checker.verify_file(file_path, expected_sha256):
+                    os.remove(file_path)  # 不正なファイルを削除
+                    raise ValueError(f"SHA256 mismatch for {filename}. Expected {expected_sha256}")
+
+                downloaded_files.append(file_path)
+                if progress_callback:
+                    # ファイル名, 現在のファイル番号(常に1), ファイル総数(filenamesの数)
+                    progress_callback(filename, len(downloaded_files), len(filenames))
+
+            except (requests.exceptions.RequestException, FileNotFoundError, ValueError) as e:
+                print(f"Download failed for {filename}: {e}")
+                self.status_string = f"{filename}のダウンロードに失敗しました: {e}"  # TODO より詳細なエラー
+                return None  # 失敗したら None を返す
+
+        if downloaded_files:
             self.status_string = "翻訳ファイルのダウンロードが完了しました。"
-            return results[self.translation_update_server_url]  # ダウンロードしたファイルのパスのリストを返す
+            return downloaded_files  # ダウンロードしたファイルのパスのリストを返す
         else:
-            error_message = results.get(self.translation_update_server_url, "翻訳ファイルのダウンロードに失敗しました")
-            print(error_message)
-            self.status_string = error_message
+            self.status_string = "翻訳ファイルのダウンロードに失敗しました"  # TODO より詳細なエラー
             return None
 
     @property
