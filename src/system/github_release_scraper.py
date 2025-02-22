@@ -7,7 +7,7 @@ from typing import Optional, Dict
 
 
 class GitHubReleaseScraper:
-    """GitHub Releases ページから情報をスクレイピングするクラス"""
+    """GitHub Releases ページから情報を取得するクラス"""
 
     def __init__(self):
         self.base_url = "https://github.com"
