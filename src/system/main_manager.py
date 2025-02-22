@@ -1,4 +1,6 @@
 import os
+import sys
+import time
 import subprocess
 import shutil
 from urllib.parse import urljoin, urlparse
@@ -67,8 +69,14 @@ class MainManager:
                 "PS2JPMod.exe",
                 "README.md",
             ]
-            self.download_app_files(self._data_dir, filenames, self.progress_callback)
+            downloaded_files = self.download_app_files(self._data_dir, filenames, self.progress_callback)
             self.ui_manager.redraw()
+            if downloaded_files and len(downloaded_files) == len(filenames):
+                self.status_string = "Appのダウンロードが完了しました。アップデートを開始します。"
+                self.ui_manager.update_status_text_ui(self.status_string)
+                time.sleep(1)
+                subprocess.Popen("data/updater.bat")
+                sys.exit(0)
 
         self.ui_manager.set_on_update_app_clicked_callback(on_update_app_clicked)
 
@@ -361,7 +369,6 @@ class MainManager:
                 return None  # 失敗したら None を返す
 
         if downloaded_files:
-            self.status_string = "Appのダウンロードが完了しました。"
             return downloaded_files  # ダウンロードしたファイルのパスのリストを返す
         else:
             self.status_string = "Appのダウンロードに失敗しました"
