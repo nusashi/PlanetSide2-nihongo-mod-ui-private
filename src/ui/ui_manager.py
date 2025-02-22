@@ -14,10 +14,8 @@ class WorkerThread(QThread):
     result_signal = Signal(object)
     error_signal = Signal(str)
 
-    def __init__(self, ui_manager, main_manager, method, *args, **kwargs):
+    def __init__(self, method, *args, **kwargs):
         super().__init__()
-        self.ui_manager = ui_manager
-        self.main_manager = main_manager
         self.method = method
         self.args = args
         self.kwargs = kwargs
