@@ -75,7 +75,7 @@ class MainManager:
                 self.status_string = "Appのダウンロードが完了しました。アップデートを開始します。"
                 self.ui_manager.update_status_text_ui(self.status_string)
                 time.sleep(1)
-                subprocess.Popen("data/updater.bat")
+                subprocess.Popen("data/updater.bat", cwd=os.environ["BASE_DIR"])
                 sys.exit(0)
 
         self.ui_manager.set_on_update_app_clicked_callback(on_update_app_clicked)
