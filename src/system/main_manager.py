@@ -3,6 +3,7 @@ import sys
 import time
 import subprocess
 import shutil
+from pathlib import Path
 from urllib.parse import urljoin, urlparse
 from typing import Callable, List, Optional, Tuple, Dict
 import requests
@@ -75,8 +76,10 @@ class MainManager:
 
         def on_update_app_finished_callback():
             self.ui_manager.redraw()
-            time.sleep(1)
-            # subprocess.Popen("data/updater.bat", cwd=os.environ["BASE_DIR"])
+            time.sleep(3)
+            project_root = Path(os.environ["DATA_DIR"]).parent
+            updater_bat_path = project_root / "data" / "updater.bat"
+            subprocess.Popen(["cmd", "/c", str(updater_bat_path)], cwd=str(project_root))
             sys.exit(0)
 
         self.ui_manager.set_on_update_app_clicked_callback((app_file_names, on_update_app_finished_callback))
