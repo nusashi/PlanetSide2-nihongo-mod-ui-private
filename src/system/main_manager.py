@@ -64,7 +64,8 @@ class MainManager:
 
         def on_update_app_clicked():
             filenames = [
-                # TODO exeが決まってから
+                "PS2JPMod.exe",
+                "README.md",
             ]
             self.download_app_files(self._data_dir, filenames, self.progress_callback)
             self.ui_manager.redraw()
@@ -98,6 +99,10 @@ class MainManager:
 
         # 初回起動対応
         is_tutorial = self._config_manager.get_initial_config()
+
+        if version.parse(self.app_version) < version.parse(const.DEFAULT_APP_VERSION):
+            self.app_version = const.DEFAULT_APP_VERSION
+
         self._next_app_version = self.app_version
         self._next_translation_version = self.translation_version
         # アップデート確認

@@ -1,4 +1,4 @@
-﻿@echo off
+﻿﻿@echo off
 chcp 65001 > nul
 setlocal
 
@@ -41,6 +41,7 @@ set "OUTPUT_EXE=%OUTPUT_DIR%\PS2JPMod.exe"
 
 :: 署名前のファイルを削除
 del "%INPUT_EXE%"
+copy README.md "%OUTPUT_DIR%"
 
 :: 一時フォルダを作成 (既に存在する場合は中身を削除)
 if exist "temp_dir\" (
