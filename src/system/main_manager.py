@@ -64,32 +64,33 @@ class MainManager:
 
         self.ui_manager.set_on_replace_translation_clicked_callback(on_replace_translation_clicked)
 
-        def on_update_app_clicked():
-            filenames = [
-                "PS2JPMod.exe",
-                "README.md",
-            ]
-            downloaded_files = self.download_app_files(self._data_dir, filenames, self.progress_callback)
+        self.ui_manager.set_download_app_files_callback(self.download_app_files)
+        self.ui_manager.set_download_translation_files_callback(self.download_translation_files)
+
+        # ダウンロードするファイル名のリスト
+        app_file_names = [
+            "PS2JPMod.exe",
+            "README.md",
+        ]
+
+        def on_update_app_finished_callback():
             self.ui_manager.redraw()
-            if downloaded_files and len(downloaded_files) == len(filenames):
-                self.status_string = "Appのダウンロードが完了しました。アップデートを開始します。"
-                self.ui_manager.update_status_text_ui(self.status_string)
-                time.sleep(1)
-                subprocess.Popen("data/updater.bat", cwd=os.environ["BASE_DIR"])
-                sys.exit(0)
+            time.sleep(1)
+            # subprocess.Popen("data/updater.bat", cwd=os.environ["BASE_DIR"])
+            sys.exit(0)
 
-        self.ui_manager.set_on_update_app_clicked_callback(on_update_app_clicked)
+        self.ui_manager.set_on_update_app_clicked_callback((app_file_names, on_update_app_finished_callback))
 
-        def on_update_translation_clicked():
-            # ダウンロードするファイル名のリスト
-            filenames = [
-                const.JP_DAT_FINE_NAME,
-                const.JP_DIR_FILE_NAME,
-            ]
-            self.download_translation_files(filenames, self.progress_callback)
+        # ダウンロードするファイル名のリスト
+        trans_file_names = [
+            const.JP_DAT_FINE_NAME,
+            const.JP_DIR_FILE_NAME,
+        ]
+
+        def on_update_translation_finished_callback():
             self.ui_manager.redraw()
 
-        self.ui_manager.set_on_update_translation_clicked_callback(on_update_translation_clicked)
+        self.ui_manager.set_on_update_translation_clicked_callback((trans_file_names, on_update_translation_finished_callback))
 
         def on_check_update_clicked():
             self.check_update()
@@ -319,63 +320,43 @@ class MainManager:
             return False
         return self._github_resource_manager.check_connection(repo_info["owner"], repo_info["repo"])
 
-    # プログレスコールバック関数を定義
-    def progress_callback(self, filename: str, file_number: int, total_files: int):
-        self.status_string = f"{filename} ({file_number}/{total_files}) ダウンロード完了"
-        self.ui_manager.update_status_text_ui(self.status_string)
-
     # 最新のAppダウンロード
-    def download_app_files(self, destination_dir: str, filenames: List[str], progress_callback: Optional[Callable[[str, int, int], None]] = None) -> Optional[List[str]]:
+    def download_app_files(self, filenames: List[str], progress_callback: Callable[[str, int, int], None]) -> List[str]:
         """
         アプリケーションの最新版（複数ファイル）をダウンロードする。
 
         Args:
-            destination_dir: 保存先のディレクトリ。
             filenames: ダウンロードするファイル名のリスト。
             progress_callback: 進捗コールバック関数。
                 引数: ファイル名, 現在のファイル番号, ファイル総数
 
         Returns:
-            ダウンロードしたファイルのパスのリスト。失敗した場合は None。
+            ダウンロードしたファイルのパスのリスト。
         """
         repo_info = self.scraper.parse_github_url(self.app_update_server_url)
         if not repo_info:
-            print("無効なAppアップデートサーバーURL")
-            self.status_string = "無効なAppアップデートサーバーURL"
-            return None
+            raise ValueError("無効なAppアップデートサーバーURL")
 
         owner = repo_info["owner"]
         repo = repo_info["repo"]
         tag = self.scraper.get_latest_tag(owner, repo)
         if not tag:
-            print("Appアップデート用の最新タグを取得できませんでした")
-            self.status_string = "Appアップデート用の最新タグを取得できませんでした"
-            return None
+            raise ValueError("Appアップデート用の最新タグを取得できませんでした")
 
         downloaded_files = []
-        for filename in filenames:
+        for i, filename in enumerate(filenames, 1):
             try:
                 # 個々のファイルのダウンロード
-                file_path = self._github_resource_manager.download_asset(owner, repo, tag, filename, destination_dir)
-
+                file_path = self._github_resource_manager.download_asset(owner, repo, tag, filename, self._data_dir)
                 downloaded_files.append(file_path)
-                if progress_callback:
-                    # ファイル名, 現在のファイル番号(常に1), ファイル総数(filenamesの数)
-                    progress_callback(filename, len(downloaded_files), len(filenames))
-
+                progress_callback(filename, i, len(filenames))
             except (requests.exceptions.RequestException, FileNotFoundError, ValueError) as e:
-                print(f"Download failed for {filename}: {e}")
-                self.status_string = f"{filename}のダウンロードに失敗しました: {e}"
-                return None  # 失敗したら None を返す
+                raise e
 
-        if downloaded_files:
-            return downloaded_files  # ダウンロードしたファイルのパスのリストを返す
-        else:
-            self.status_string = "Appのダウンロードに失敗しました"
-            return None
+        return downloaded_files
 
     # 翻訳ファイルのダウンロード関数
-    def download_translation_files(self, filenames: List[str], progress_callback: Optional[Callable[[str, int, int], None]] = None) -> Optional[List[str]]:
+    def download_translation_files(self, filenames: List[str], progress_callback: Callable[[str, int, int], None]) -> List[str]:
         """
         翻訳ファイルとフォントファイルの最新版をダウンロードする。
 
@@ -385,46 +366,31 @@ class MainManager:
                 引数: ファイル名, 現在のファイル番号, ファイル総数
 
         Returns:
-            ダウンロードしたファイルのパスのリスト。失敗した場合は None。
+            ダウンロードしたファイルのパスのリスト。
         """
         repo_info = self.scraper.parse_github_url(self.translation_update_server_url)
         if not repo_info:
-            print("無効な翻訳アップデートサーバーURL")
-            self.status_string = "無効な翻訳アップデートサーバーURL"
-            return None
+            raise ValueError("無効な翻訳アップデートサーバーURL")
 
         owner = repo_info["owner"]
         repo = repo_info["repo"]
         tag = self.scraper.get_latest_tag(owner, repo)
         if not tag:
-            print("翻訳アップデート用の最新タグを取得できませんでした")
-            self.status_string = "翻訳アップデート用の最新タグを取得できませんでした"
-            return None
+            raise ValueError("翻訳アップデート用の最新タグを取得できませんでした")
 
         downloaded_files = []
-        for filename in filenames:
+        for i, filename in enumerate(filenames, 1):
             try:
                 # 個々のファイルのダウンロード
                 file_path = self._github_resource_manager.download_asset(owner, repo, tag, filename, self._data_dir)
-
                 downloaded_files.append(file_path)
-                if progress_callback:
-                    # ファイル名, 現在のファイル番号(常に1), ファイル総数(filenamesの数)
-                    progress_callback(filename, len(downloaded_files), len(filenames))
-
+                progress_callback(filename, i, len(filenames))
             except (requests.exceptions.RequestException, FileNotFoundError, ValueError) as e:
-                print(f"Download failed for {filename}: {e}")
-                self.status_string = f"{filename}のダウンロードに失敗しました: {e}"
-                return None  # 失敗したら None を返す
+                raise e
 
-        if downloaded_files:
-            self.status_string = "翻訳ファイルのダウンロードが完了しました。"
-            # バージョンを更新する
-            self.translation_version = self._next_translation_version
-            return downloaded_files  # ダウンロードしたファイルのパスのリストを返す
-        else:
-            self.status_string = "翻訳ファイルのダウンロードに失敗しました"
-            return None
+        # バージョンを更新する
+        self.translation_version = self._next_translation_version
+        return downloaded_files
 
     @property
     def status_string(self):

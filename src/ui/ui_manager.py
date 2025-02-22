@@ -1,4 +1,5 @@
 import sys
+from typing import Tuple, List, Callable
 from packaging import version  # バージョン比較に使用
 from typing import Callable
 from PySide6.QtWidgets import QApplication, QFileDialog
@@ -9,23 +10,56 @@ from ui.help_popup import HelpPopup
 from ui.tutorial_popup import TutorialPopup
 from const import const
 
-class WorkerThread(QThread):
-    progress_signal = Signal(int, int, str)  # (現在のファイル番号, ファイル総数, ファイル名)
-    result_signal = Signal(object)
-    error_signal = Signal(str)
 
-    def __init__(self, method, *args, **kwargs):
+class DownloadWorker(QThread):
+    """
+    ダウンロード処理を別スレッドで実行するクラス。
+    進捗通知、完了通知、エラー通知を行う。
+    """
+
+    progress_signal = Signal(int, int, str)  # 進捗: 現在のファイル番号, 総数, ファイル名
+    finished_signal = Signal(tuple)  # 完了: (ダウンロードしたファイルのリスト, 完了時コールバック関数)
+    error_signal = Signal(str)  # エラーメッセージ
+
+    def __init__(self, download_func, filenames, finished_callback):
+        """
+        初期化メソッド。
+        :param download_func: MainManagerから提供されるダウンロード関数
+        :param filenames: ダウンロードするファイル名のリスト
+        :param finished_callback: 完了時コールバック関数
+        """
         super().__init__()
-        self.method = method
-        self.args = args
-        self.kwargs = kwargs
+        self.download_func = download_func
+        self.filenames = filenames
+        self.finished_callback = finished_callback
+        self._cancelled = False
 
     def run(self):
+        """
+        スレッド内でダウンロード処理を実行。
+        進捗をシグナルで通知し、完了またはエラーを通知。
+        """
         try:
-            result = self.method(*self.args, **self.kwargs)
-            self.result_signal.emit(result)
+            downloaded_files = self.download_func(self.filenames, self._progress_callback)
+            if not self._cancelled:
+                self.finished_signal.emit((downloaded_files, self.finished_callback))
         except Exception as e:
             self.error_signal.emit(str(e))
+
+    def _progress_callback(self, filename, current, total):
+        """
+        進捗通知用のコールバック関数。
+        キャンセルフラグが立っている場合は例外を発生させる。
+        """
+        if self._cancelled:
+            raise InterruptedError("ダウンロードがキャンセルされました")
+        self.progress_signal.emit(current, total, filename)
+
+
+    def cancel(self):
+        """ダウンロード処理をキャンセルする。"""
+        self._cancelled = True
+
 
 class UIManager(QObject):
     # プロパティのコールバックを初期化
@@ -76,17 +110,54 @@ class UIManager(QObject):
     def set_on_replace_translation_clicked_callback(self, callback: Callable[[], None]):
         self._on_replace_translation_clicked_callback = callback
 
-    def set_on_update_app_clicked_callback(self, callback: Callable[[], None]):
-        self._on_update_app_clicked_callback = callback
+    def set_download_app_files_callback(self, download_app_files_callback):
+        self._download_app_files_callback = download_app_files_callback
 
-    def set_on_update_translation_clicked_callback(self, callback: Callable[[], None]):
-        self._on_update_translation_clicked_callback = callback
+    def set_download_translation_files_callback(self, download_translation_files_callback):
+        self._download_translation_files_callback = download_translation_files_callback
+
+    def set_on_update_app_clicked_callback(self, callback_data: Tuple[List, Callable[[], None]]):
+        self._on_update_app_clicked_callback_data = callback_data
+
+    def set_on_update_translation_clicked_callback(self, callback_data: Tuple[List, Callable[[], None]]):
+        self._on_update_translation_clicked_callback_data = callback_data
 
     def set_on_check_update_clicked_callback(self, callback: Callable[[], None]):
         self._on_check_update_clicked_callback = callback
 
     def run(self):
         sys.exit(self.app.exec())
+
+    def start_download(self, download_func, filenames, finished_callback):
+        """
+        ダウンロード処理を開始。
+        DownloadWorkerを作成し、シグナルとスロットを接続。
+        """
+        self.download_worker = DownloadWorker(download_func, filenames, finished_callback)
+        self.download_worker.progress_signal.connect(self.update_progress)
+        self.download_worker.finished_signal.connect(self.on_download_finished)
+        self.download_worker.error_signal.connect(self.on_download_error)
+        self.download_worker.start()
+
+    def cancel_download(self):
+        """ダウンロードをキャンセル。"""
+        if hasattr(self, "download_worker"):
+            self.download_worker.cancel()
+
+    def update_progress(self, current, total, filename):
+        """進捗情報をGUIに反映。"""
+        self.status_text_changed.emit(f"ダウンロード中: {filename} ({current}/{total})")
+
+    def on_download_finished(self, data):
+        """ダウンロード完了時の処理。"""
+        downloaded_files, finished_callback = data
+        self.status_text_changed.emit("ダウンロード完了")
+        if finished_callback:
+            finished_callback()
+
+    def on_download_error(self, error_message):
+        """エラー発生時の処理。"""
+        self.status_text_changed.emit(f"エラー: {error_message}")
 
     def setup_connections(self):
         # MainWindowのコールバック設定
@@ -141,12 +212,16 @@ class UIManager(QObject):
             self._on_replace_translation_clicked_callback()
 
     def _on_update_app_clicked(self):
-        if self._on_update_app_clicked_callback:
-            self._on_update_app_clicked_callback()
+        if self._on_update_app_clicked_callback_data:
+            filenames = self._on_update_app_clicked_callback_data[0]
+            finished_callback = self._on_update_app_clicked_callback_data[1]
+            self.start_download(self._download_app_files_callback, filenames, finished_callback)
 
     def _on_update_translation_clicked(self):
-        if self._on_update_translation_clicked_callback:
-            self._on_update_translation_clicked_callback()
+        if self._on_update_translation_clicked_callback_data:
+            filenames = self._on_update_translation_clicked_callback_data[0]
+            finished_callback = self._on_update_translation_clicked_callback_data[1]
+            self.start_download(self._download_translation_files_callback, filenames, finished_callback)
 
     def _on_check_update_clicked(self):
         if self._on_check_update_clicked_callback:
