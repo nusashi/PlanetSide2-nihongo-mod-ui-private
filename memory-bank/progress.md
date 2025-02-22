@@ -19,17 +19,11 @@
 *   アップデート機能 (アプリと翻訳データ)
     *   GitHub Releases からのダウンロード: 実装済み (`GitHubResourceManager.download_latest_assets`, `MainManager.download_app_files`, `MainManager.download_translation_files`)
 *   Nuitka でのコンパイルと証明書署名: 確認済み (`build.bat` で自動化)
+*   `updater.bat`の作成: 完了
 
 ## 構築するもの
 
-*   アップデート機能 (アプリと翻訳データ)
-    *   ダウンロードしたファイルの適用: 未実装 (TODO: `download_app_files`でダウンロードしたファイルを適用する処理が必要)
-*   各種機能のテスト: 未実施 (TODO)
-*   必要なファイルやフォルダが無い場合の対応:
-    *   ja_jp_data.datが無い場合：疎通確認後に初回ダウンロード (TODO: `MainManager.try_translation`で、ファイルが存在しない場合にダウンロードする処理が必要)
-    *   ja_jp_data.dirが無い場合：疎通確認後に初回ダウンロード (TODO: `MainManager.try_translation`で、ファイルが存在しない場合にダウンロードする処理が必要)
-    *   MyFont.ttfが無い場合：疎通確認後に初回ダウンロード (TODO: `MainManager.try_translation`で、ファイルが存在しない場合にダウンロードする処理が必要)
-    *   updater.exeが無い場合：疎通確認後に初回ダウンロード (TODO: まだ`update.exe`は作成すらしてないので)
+*   なし
 
 ## 要件
 
@@ -45,14 +39,8 @@
 
 ## 既知の問題
 
-*   特になし (これから実装していく中で問題が見つかる可能性あり)
+*   特になし
 
 ## 今後の計画
 
-1.  UIの調整 (必要に応じて)
-2.  各種機能の実装とテスト (ゲーム起動、日本語化、アップデート確認、設定変更など)
-3.  UIテスト
-4.  アップデート機能の実装 (アプリと翻訳データ)
-    *   ダウンロードしたファイルの適用
-5.  ファイル操作権限不足時の例外処理
-6.  翻訳ファイルやフォントファイルが無い場合の初回ダウンロード処理
+*   なし
