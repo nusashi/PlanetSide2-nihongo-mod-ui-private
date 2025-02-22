@@ -152,7 +152,6 @@ class UIManager(QObject):
             self.local_path_changed.emit(selected_path)
 
     def _on_main_window_close_event(self, event):
-        # TODO: 必要なら確認ダイアログを出すなど
         event.accept()
         QApplication.quit()
 

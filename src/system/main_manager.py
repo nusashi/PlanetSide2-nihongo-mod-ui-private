@@ -4,7 +4,7 @@ import shutil
 from urllib.parse import urljoin, urlparse
 from typing import Callable, List, Optional, Tuple, Dict
 import requests
-from packaging import version  # バージョン比較に使用
+from packaging import version
 from const import const
 from system.config_manager import JsonConfigManager
 from system.github_resource_manager import GitHubResourceManager
@@ -24,7 +24,7 @@ class MainManager:
         self._status_string = ""  # ステータス
         self._config_manager = JsonConfigManager(data_dir)
         self._github_resource_manager = GitHubResourceManager()
-        self.scraper = GitHubReleaseScraper()  # Web スクレイピング用
+        self.scraper = GitHubReleaseScraper()
         self.ui_manager = UIManager()
 
     def initialize(self):
@@ -77,7 +77,6 @@ class MainManager:
             filenames = [
                 const.JP_DAT_FINE_NAME,
                 const.JP_DIR_FILE_NAME,
-                # const.FONT_FILE_NAME, # TODO どうしようかな...多分要らない
             ]
             self.download_translation_files(filenames, self.progress_callback)
             self.ui_manager.redraw()
@@ -260,7 +259,7 @@ class MainManager:
             self.status_string = f"{ui_resource_fonts_path} フォルダが存在しません"
             return False
 
-        # TODO RemoteConfigなどで、対応が出来るようにしたい
+        # TODO 足りないときはアップデートで対応
         # チェックするフォントのリスト (ファイル名のみ)
         required_fonts = [
             "Geo-Md.ttf",
@@ -358,14 +357,14 @@ class MainManager:
 
             except (requests.exceptions.RequestException, FileNotFoundError, ValueError) as e:
                 print(f"Download failed for {filename}: {e}")
-                self.status_string = f"{filename}のダウンロードに失敗しました: {e}"  # TODO より詳細なエラー
+                self.status_string = f"{filename}のダウンロードに失敗しました: {e}"
                 return None  # 失敗したら None を返す
 
         if downloaded_files:
             self.status_string = "Appのダウンロードが完了しました。"
             return downloaded_files  # ダウンロードしたファイルのパスのリストを返す
         else:
-            self.status_string = "Appのダウンロードに失敗しました"  # TODO より詳細なエラー
+            self.status_string = "Appのダウンロードに失敗しました"
             return None
 
     # 翻訳ファイルのダウンロード関数
@@ -408,7 +407,7 @@ class MainManager:
 
             except (requests.exceptions.RequestException, FileNotFoundError, ValueError) as e:
                 print(f"Download failed for {filename}: {e}")
-                self.status_string = f"{filename}のダウンロードに失敗しました: {e}"  # TODO より詳細なエラー
+                self.status_string = f"{filename}のダウンロードに失敗しました: {e}"
                 return None  # 失敗したら None を返す
 
         if downloaded_files:
@@ -417,7 +416,7 @@ class MainManager:
             self.translation_version = self._next_translation_version
             return downloaded_files  # ダウンロードしたファイルのパスのリストを返す
         else:
-            self.status_string = "翻訳ファイルのダウンロードに失敗しました"  # TODO より詳細なエラー
+            self.status_string = "翻訳ファイルのダウンロードに失敗しました"
             return None
 
     @property
