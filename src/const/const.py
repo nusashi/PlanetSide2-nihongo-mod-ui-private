@@ -24,9 +24,8 @@ DEFAULT_APP_VERSION = "0.0.1"
 DEFAULT_TRANSLATION_VERSION = "0.0.1"
 DEFAULT_LAUNCH_MODE = STEAM_LAUNCH
 DEFAULT_LOCAL_PATH = ""
-DEFAULT_APP_UPDATE_SERVER_URL = "https://github.com/nusashi/PlanetSide2-nihongo-mod-ui/releases/latest"
-DEFAULT_TRANSLATION_UPDATE_SERVER_URL = "https://github.com/nusashi/PlanetSide2-nihongo-mod-api/releases/latest"
-
+DEFAULT_APP_UPDATE_SERVER_URL = "https://github.com/nusashi/PlanetSide2-nihongo-mod-ui/"
+DEFAULT_TRANSLATION_UPDATE_SERVER_URL = "https://github.com/nusashi/PlanetSide2-nihongo-mod-api/"
 
 # ラジオボタンレイアウト
 LAUNCH_BUTTON_TEXT = "1:ゲーム起動"
