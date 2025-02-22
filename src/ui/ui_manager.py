@@ -2,13 +2,32 @@ import sys
 from packaging import version  # バージョン比較に使用
 from typing import Callable
 from PySide6.QtWidgets import QApplication, QFileDialog
-from PySide6.QtCore import QObject, Signal
+from PySide6.QtCore import QObject, Signal, QThread
 from ui.main_window import MainWindow
 from ui.settings_popup import SettingsPopup
 from ui.help_popup import HelpPopup
 from ui.tutorial_popup import TutorialPopup
 from const import const
 
+class WorkerThread(QThread):
+    progress_signal = Signal(int, int, str)  # (現在のファイル番号, ファイル総数, ファイル名)
+    result_signal = Signal(object)
+    error_signal = Signal(str)
+
+    def __init__(self, ui_manager, main_manager, method, *args, **kwargs):
+        super().__init__()
+        self.ui_manager = ui_manager
+        self.main_manager = main_manager
+        self.method = method
+        self.args = args
+        self.kwargs = kwargs
+
+    def run(self):
+        try:
+            result = self.method(*self.args, **self.kwargs)
+            self.result_signal.emit(result)
+        except Exception as e:
+            self.error_signal.emit(str(e))
 
 class UIManager(QObject):
     # プロパティのコールバックを初期化
