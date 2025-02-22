@@ -20,6 +20,8 @@
     *   GitHub Releases からのダウンロード: 実装済み (`GitHubResourceManager.download_latest_assets`, `MainManager.download_app_files`, `MainManager.download_translation_files`)
 *   Nuitka でのコンパイルと証明書署名: 確認済み (`build.bat` で自動化)
 *   `updater.bat`の作成: 完了
+*   `main.py`のエラー修正（GitHubリリースがない場合の処理）
+*   `updater.bat`をプロジェクトルートから実行するように修正（`main_manager.py`の`subprocess.Popen`に`cwd`引数を追加）
 
 ## 構築するもの
 
@@ -35,7 +37,6 @@
 ## 現在のステータス
 
 *   Memory Bank の更新: 実施中
-*   全コードの読み込み: 完了
 
 ## 既知の問題
 
