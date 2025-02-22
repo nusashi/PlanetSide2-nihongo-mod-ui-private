@@ -27,7 +27,7 @@ python src\const\const.py "%OUTPUT_DIR%"
 set /p APP_VERSION=<%OUTPUT_DIR%\version.txt
 
 :: バージョン情報を使って ZIP ファイル名を作成
-set "ZIP_FILENAME=PS2日本語化Mod v%APP_VERSION%.zip"
+set "ZIP_FILENAME=PS2JPMod_v%APP_VERSION%.zip"
 
 :: Nuitka でコンパイル
 python -m nuitka --onefile --standalone --windows-console-mode=disable --enable-plugin=pyside6 --windows-icon-from-ico=src/resources/icon.ico --include-data-files=src/resources/icon.ico=resources/icon.ico --output-dir=%OUTPUT_DIR% --output-filename=PS2JPMod_unsigned --clean-cache=all --remove-output src/main.py

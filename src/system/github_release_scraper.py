@@ -39,8 +39,10 @@ class GitHubReleaseScraper:
             return None
 
         soup = BeautifulSoup(html, "html.parser")
-        match = re.search(r"/releases/tag/(.+)$", soup.find("a", href=re.compile(r"/releases/tag/"))["href"])
-        if match:
-            return match.group(1)
+        tag_link = soup.find("a", href=re.compile(r"/releases/tag/"))
+        if tag_link:
+            match = re.search(r"/releases/tag/(.+)$", tag_link["href"])
+            if match:
+                return match.group(1)
 
         return None
