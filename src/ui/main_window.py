@@ -40,6 +40,14 @@ class MainWindow(QMainWindow):
         self.setFixedSize(270, 350)
         print("MainWindow.setFixedSize called")
 
+        # メインディスプレイのジオメトリを取得
+        screen = QApplication.primaryScreen()
+        rect = screen.geometry()
+        left_top_x = rect.x()  # メインディスプレイの左端
+        left_top_y = rect.y()  # メインディスプレイの上端
+
+        self.move(left_top_x + 100, left_top_y + 100)  # ちょっと余白を持たせる
+
         self.setup_callbacks()  # コールバック設定
 
     def set_icons(self):

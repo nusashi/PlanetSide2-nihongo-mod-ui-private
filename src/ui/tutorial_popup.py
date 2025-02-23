@@ -53,10 +53,16 @@ class TutorialPopup(QWidget):
         layout = QVBoxLayout()
         layout.addWidget(scroll_area)
         layout.addLayout(hbox_local_path)
+
+        # 閉じるボタン
+        self.close_button = QPushButton("閉じる")
+        self.close_button.clicked.connect(self.close)
+        layout.addWidget(self.close_button)
+
         self.setLayout(layout)
 
         # ウィンドウサイズを固定
-        self.setFixedSize(400, 175)
+        self.setFixedSize(400, 200)
         # 最大化ボタンを無効化
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowMaximizeButtonHint | Qt.WindowCloseButtonHint)
 
