@@ -7,7 +7,7 @@ if %errorlevel% == 0 (
     exit /b 1
 )
 copy /Y data\PS2JPMod.exe .\PS2JPMod.exe
-copy /Y data\README.md .\README.md
+copy /Y data\はじめにお読みください.txt .\はじめにお読みください.txt
 del data\PS2JPMod.exe
-del data\README.md
+del data\はじめにお読みください.txt
 start .\PS2JPMod.exe

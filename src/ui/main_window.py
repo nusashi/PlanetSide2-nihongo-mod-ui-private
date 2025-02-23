@@ -53,12 +53,11 @@ class MainWindow(QMainWindow):
     def set_icons(self):
         print("MainWindow.set_icons called")
 
-        try:
-            # コンパイルされた場合
-            self.app_icon = QIcon("resources/icon.ico")
-        except FileNotFoundError:
-            # 通常実行
-            self.app_icon = QIcon("src/resources/icon.ico")
+        if "__compiled__" in globals():  # コンパイルされた場合
+            self.app_icon = QIcon("resources/ps2jpmod.ico")
+        else:  # 通常実行
+            self.app_icon = QIcon("src/resources/ps2jpmod.ico")
+        print(self.app_icon)
 
         if not self.app_icon.isNull():
             self.setWindowIcon(self.app_icon)
