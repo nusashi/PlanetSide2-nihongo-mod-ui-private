@@ -239,11 +239,21 @@ class MainManager:
             self.status_string = f"{const.JP_DIR_FILE_NAME} が存在しません"
             return False
 
-        font_path = os.path.join(self._data_dir, const.FONT_FILE_NAME)
-        if not os.path.exists(font_path):
-            print(f"{const.FONT_FILE_NAME} が存在しません")
-            self.status_string = f"{const.FONT_FILE_NAME} が存在しません"
-            return False
+        # 複数対応
+        required_jp_fonts = [
+            "Geo-Md.ttf",
+            "Ps2GeoMdRosaVerde.ttf",
+        ]
+        existing_jp_font_paths = {}  # フォント名をキーにしてコピー元パスを格納する辞書
+
+        for font_name in required_jp_fonts:
+            jp_font_path = os.path.join(self._data_dir, "fonts", font_name)
+            if os.path.exists(jp_font_path):
+                existing_jp_font_paths[font_name] = jp_font_path  # フォント名をキーに格納
+            else:
+                print(f"{font_name} が存在しません")
+                self.status_string = f"{font_name} が存在しません"
+                return False
 
         locale_path = os.path.join(self.local_path, "Locale")
         # Locale フォルダが存在しない場合はエラー
@@ -277,12 +287,12 @@ class MainManager:
             "Geo-Md.ttf",
             "Ps2GeoMdRosaVerde.ttf",
         ]
-        existing_font_paths = []  # 存在が確認されたフォントのパスを格納するリスト
+        existing_font_paths = {}  # フォント名をキーにしてコピー先パスを格納する辞書
 
         for font_name in required_fonts:
             destination_font_path = os.path.join(ui_resource_fonts_path, font_name)
             if os.path.exists(destination_font_path):
-                existing_font_paths.append(destination_font_path)  # 存在したらリストに追加
+                existing_font_paths[font_name] = destination_font_path  # フォント名をキーに格納
             else:
                 print(f"{font_name} が存在しません")
                 self.status_string = f"{font_name} が存在しません"
@@ -291,8 +301,10 @@ class MainManager:
         try:
             shutil.copy2(jp_data_dat_path, destination_dat_path)
             shutil.copy2(jp_data_dir_path, destination_dir_path)
-            for destination_font_path in existing_font_paths:
-                shutil.copy2(font_path, destination_font_path)
+            for font_name, destination_font_path in existing_font_paths.items():
+                if font_name in existing_jp_font_paths:  # 対応するコピー元フォントがある場合のみコピー
+                    shutil.copy2(existing_jp_font_paths[font_name], destination_font_path)
+                    print(f"{font_name} を {destination_font_path} にコピーしました")
             print("翻訳終了")
             self.status_string = "日本語化が完了しました。\n「PLAY」ボタンを押してゲームを実行してください"
             return True
