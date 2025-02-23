@@ -1,55 +1,68 @@
-# ヘルプ
+# PlanetSide 2 日本語化MOD管理ツール
 
-## このツールについて
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/nusashi/PlanetSide2-nihongo-mod-ui?style=flat-square)](https://github.com/nusashi/PlanetSide2-nihongo-mod-ui/releases)
+[![GitHub issues](https://img.shields.io/github/issues/nusashi/PlanetSide2-nihongo-mod-ui?style=flat-square)](https://github.com/nusashi/PlanetSide2-nihongo-mod-ui/issues)
+[![GitHub license](https://img.shields.io/github/license/nusashi/PlanetSide2-nihongo-mod-ui?style=flat-square)](https://github.com/nusashi/PlanetSide2-nihongo-mod-ui/blob/main/LICENSE)
 
-このツールは、PlanetSide 2 を日本語化するためのものです。以下の機能があります。
+このツールは、PlanetSide 2を日本語でプレイするための非公式管理ツールです。ゲームの起動、日本語化、アップデートを簡単に行うことができます。
 
-*   **ゲーム起動:** PlanetSide 2 を起動します。Steam 版と通常版の両方に対応しています。
-*   **日本語化:** PlanetSide 2 のゲーム内テキストを日本語化します。必要なファイル (翻訳データとフォント) をゲームフォルダにコピーします。
-*   **アップデート確認:** アプリケーションと翻訳データの新しいバージョンがないか確認します。新しいバージョンが見つかった場合は、更新ボタンが表示されます。
-*   **設定:** PlanetSide 2 のインストールフォルダ (ローカルパス) や、アップデートサーバーの URL を変更できます。
+## 主な機能
 
-## 使い方
+*   **ゲーム起動**: Steam版/通常版に対応。
+*   **日本語化**: ゲーム内のテキストを日本語に変換。
+*   **アップデート確認**: ツールおよび翻訳データの最新版をチェック。
 
-フォルダの中の「PS2JPMod.exe」を起動してください。
+## インストールと使い方
 
-1.  **PlanetSide 2 のインストールフォルダを設定します。**
-    *   初めてツールを使うときは、PlanetSide 2 がインストールされているフォルダを指定する必要があります。
-    *   設定は「設定」ボタンから変更できます。
+より詳しい使い方、トラブルシューティングについては、同梱の「はじめにお読みください」を参照してください。
 
-2.  **必要に応じて、起動モードを選択します。**
-    *   Steam から PlanetSide 2 をインストールした場合は、「Steam起動」を選択してください。
-    *   そうでない場合は、「通常起動」を選択してください。
+1.  最新のリリースを[Releases](https://github.com/nusashi/PlanetSide2-nihongo-mod-ui/releases)から「PS2JPMod_v1.x.x.zip」ダウンロードします。
+2.  「PS2日本語化Mod」を任意の位置に配置してください。
+3.  `PS2JPMod.exe`を実行します。
+4.  初回起動時に、PlanetSide 2のインストールフォルダを設定します。
 
-3.  **「ゲーム起動」ボタンをクリックすると、PlanetSide 2 が起動します。**
+## トラブルシューティング (詳細)
 
-4.  **「日本語化」ボタンをクリックすると、ゲーム内テキストが日本語化されます。**
-    *   日本語化に必要なファイルが、PlanetSide 2 のインストールフォルダ内の `Locale` フォルダと `UI/Resource/Fonts` フォルダにコピーされます。
+### 日本語化されない場合 (詳細)
 
-5.  **「アップデート確認」ボタンをクリックすると、アプリケーションと翻訳データの新しいバージョンがないか確認できます。**
-    *   新しいバージョンが見つかった場合は、「更新」ボタンが表示されます。
-    *   「更新」ボタンをクリックすると、最新バージョンがダウンロードされ、適用されます。
+*   `data` フォルダに以下のファイルが存在するか、より詳細に確認してください。
+    1.  `ja_jp_data.dat`: 翻訳データ本体
+    2.  `ja_jp_data.dir`: 翻訳データのインデックス
+    3.  `fonts/Geo-Md.ttf`: メインフォントファイル
+    4.  `fonts/Ps2GeoMdRosaVerde.ttf`: サブフォントファイル
 
-## トラブルシューティング
+上記ファイルが破損している、または存在しない場合は、[Releases](https://github.com/nusashi/PlanetSide2-nihongo-mod-ui/releases) から最新版をダウンロードしなおしてください。
 
-*   **ゲームが起動しない:**
-    *   PlanetSide 2 のインストールフォルダが正しく設定されているか確認してください。
-    *   起動モードが正しいか確認してください (Steam 版の場合は「Steam起動」を選択)。
-*   **日本語化されない:**
-    *   PlanetSide 2 のインストールフォルダが正しく設定されているか確認してください。
-    *   必要なファイル (ja_jp_data.dat, ja_jp_data.dir, MyFont.ttf) が `data` フォルダ内に存在するか確認してください。
-    *   PlanetSide 2 のインストールフォルダに `Locale`フォルダと`UI/Resource/Fonts`フォルダが存在しているか確認してください。
-*   **アップデートに失敗する:**
-    *   インターネット接続が正常か確認してください。
-    *   アップデートサーバーの URL が正しいか確認してください (設定から変更できます)。
+## 貢献について
+翻訳の誤り、改善要望などありましたら、[Issues](https://github.com/nusashi/PlanetSide2-nihongo-mod-ui/issues)からお知らせいただくか、以下の連絡先までご連絡ください。
 
-## 問い合わせ先
+*   不具合・質問: ぬさし([https://x.com/nusashi](https://x.com/nusashi))、seigo2016([https://x.com/seigo2018](https://x.com/seigo2018))
+*   翻訳について: mossy([https://x.com/Mossstone_1mzn9](https://x.com/Mossstone_1mzn9))
 
-*   不具合報告や質問は、[ぬさし](https://x.com/nusashi) までお願いします。
+## Daybreak Game Company への感謝
 
-## クレジット
+長年にわたり、PlanetSide 2 という素晴らしいゲームを提供し続けてくださっている Daybreak Game Company に深く感謝いたします。
 
-Created By nusashi(Frontend), seigo2016(Backend), mossy(Translator)
+## 謝辞
 
-License: MIT License
+初期の日本語化MOD開発から、長年にわたるメンテナンス、そして新たなフォントの導入まで、PlanetSide 2の日本語プレイ環境の礎を築いてくださった、spoon氏、besuda氏、take8763氏に心より感謝申し上げます。
+
+## ライセンス
+
+*   翻訳データ: CC0
+*   ツール: MITライセンス
+*   フォント: IPAexゴシック改変 (ライセンス準拠)
+
+## 免責事項
+
+*   本MODは、Daybreak Game Company LLC (以下、Daybreak) が提供する PlanetSide 2 の非公式MODであり、Daybreak とは一切関係ありません。
+*   PlanetSide 2 は Daybreak の登録商標であり、関連する全てのアートワーク、ストーリー、スクリーンショット、ゲーム内データなどの表現物は Daybreak の知的財産です。
+*   本MODは、Daybreak が許諾する範囲内でこれらの表現物を使用していますが、Daybreak は本MODの内容についていかなる保証も行いません。
+*   本MODの使用、インストール、または本MODに関連する利用に起因するいかなる損害 (データの損失、ゲームの不具合、アカウントの停止などを含むがこれらに限定されない) についても、Daybreak および本MODの開発者は一切の責任を負いません。
+*   本MODの使用は自己責任でお願いします。
+*   本MODの導入によって生じたいかなる問題についても、Daybreakへの問い合わせは行わないでください。
+
+## 更新履歴
+*   2025/2/28 v1.0.0 初版リリース
+
 Copyright © 2025 PlanetSide2 日本語化MOD 開発チーム
