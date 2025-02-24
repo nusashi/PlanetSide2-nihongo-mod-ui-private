@@ -28,8 +28,8 @@
 *   `data` フォルダに以下のファイルが存在するか、より詳細に確認してください。
     1.  `ja_jp_data.dat`: 翻訳データ本体
     2.  `ja_jp_data.dir`: 翻訳データのインデックス
-    3.  `fonts/Geo-Md.ttf`: メインフォントファイル
-    4.  `fonts/Ps2GeoMdRosaVerde.ttf`: サブフォントファイル
+    3.  `fonts/Geo-Md.ttf`: メインフォントファイル1
+    4.  `fonts/Ps2GeoMdRosaVerde.ttf`: メインフォントファイル2
 
 上記ファイルが破損している、または存在しない場合は、[Releases](https://github.com/nusashi/PlanetSide2-nihongo-mod-ui/releases) から最新版をダウンロードしなおしてください。
 
