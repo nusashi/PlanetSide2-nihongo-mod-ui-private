@@ -21,7 +21,7 @@ class HelpPopup(QWidget):
         6. **設定:** インストールフォルダや、サーバーURLなどを設定します。
         7. **ヘルプ:** このヘルプを表示します。
 
-        詳細については、README.mdを参照してください。
+        詳細については、同梱の「はじめにお読みください.txt」を参照してください。
         """
         self.label_help = QLabel(help_text)
         self.label_help.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)  # 左上
