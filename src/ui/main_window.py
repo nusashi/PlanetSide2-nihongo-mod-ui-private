@@ -1,5 +1,6 @@
 import sys
 import os
+from pathlib import Path
 from PySide6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -54,10 +55,10 @@ class MainWindow(QMainWindow):
         print("MainWindow.set_icons called")
 
         if "__compiled__" in globals():  # コンパイルされた場合
-            self.app_icon = QIcon("resources/ps2jpmod.ico")
+            icon_path = os.path.join(Path(__file__).resolve().parent.parent, "resources/ps2jpmod.ico")
+            self.app_icon = QIcon(icon_path)
         else:  # 通常実行
             self.app_icon = QIcon("src/resources/ps2jpmod.ico")
-        print(self.app_icon)
 
         if not self.app_icon.isNull():
             self.setWindowIcon(self.app_icon)

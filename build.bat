@@ -30,7 +30,8 @@ set /p APP_VERSION=<%OUTPUT_DIR%\version.txt
 set "ZIP_FILENAME=PS2JPMod_v%APP_VERSION%.zip"
 
 :: Nuitka でコンパイル
-python -m nuitka --onefile --standalone --windows-console-mode=disable --enable-plugin=pyside6 --windows-icon-from-ico=src/resources/ps2jpmod.ico --include-data-files=src/resources/ps2jpmod.ico=resources/ps2jpmod.ico --output-dir=%OUTPUT_DIR% --output-filename=PS2JPMod_unsigned --clean-cache=all --remove-output src/main.py
+@REM python -m nuitka --onefile --onefile-as-archive --windows-console-mode=force --enable-plugin=pyside6 --windows-icon-from-ico=src/resources/ps2jpmod.ico --include-data-files=src/resources/ps2jpmod.ico=resources/ps2jpmod.ico --output-dir=%OUTPUT_DIR% --output-filename=PS2JPMod_unsigned --clean-cache=all --remove-output src/main.py
+python -m nuitka --onefile --onefile-as-archive --windows-console-mode=disable --enable-plugin=pyside6 --windows-icon-from-ico=src/resources/ps2jpmod.ico --include-data-files=src/resources/ps2jpmod.ico=resources/ps2jpmod.ico --output-dir=%OUTPUT_DIR% --output-filename=PS2JPMod_unsigned --clean-cache=all --remove-output src/main.py
 
 :: 署名前後のファイルパスを設定
 set "INPUT_EXE=%OUTPUT_DIR%\PS2JPMod_unsigned.exe"
