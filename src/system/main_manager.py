@@ -91,6 +91,7 @@ class MainManager:
         ]
 
         def on_update_translation_finished_callback():
+            self.check_update()
             self.ui_manager.redraw()
 
         self.ui_manager.set_on_update_translation_clicked_callback((trans_file_names, on_update_translation_finished_callback))
