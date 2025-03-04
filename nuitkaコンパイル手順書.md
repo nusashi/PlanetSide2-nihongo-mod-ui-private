@@ -8,9 +8,9 @@
 
 *   Pythonがインストールされていること
 *   nuitkaがインストールされていること
-    *   `pip install nuitka`でインストールできるわ
+    *   `pip install nuitka`でインストールできる
 *   必要なPythonパッケージがインストールされていること
-    *   `pip install -r requirements.txt`でインストールできるわ
+    *   `pip install -r requirements.txt`でインストールできる
 
 ## 手順
 
